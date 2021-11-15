@@ -26,7 +26,7 @@ export default function ButtonAppBar() {
   }
   const logout = () => {
     localStorage.clear()
-    history.push('/')
+    history.push('/login')
   }
   return (
     <Box sx={{ flexGrow: 1 }}>
