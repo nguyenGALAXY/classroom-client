@@ -25,7 +25,6 @@ const RegisterButton = styled(Button)({
 })
 export default function Register() {
   const [disabled, setDisabled] = useState(false)
-  //const history = useHistory()
   const [emailError, setEmailError] = useState(false)
   const [usernameError, setUsernameError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)

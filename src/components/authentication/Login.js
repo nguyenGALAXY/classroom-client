@@ -79,7 +79,7 @@ export default function SignIn() {
   }
   const responseGoogle = async (response) => {
     try {
-      const res = await axiosClient.post('/api/auth/google_login', {
+      const res = await axiosClient.post('/api/auth/google-login', {
         tokenId: response.tokenId,
       })
       if (res.data.success) {

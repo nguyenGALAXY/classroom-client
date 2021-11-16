@@ -13,7 +13,7 @@ export default function ActivationEmail() {
     if (activation_token) {
       const activationEmail = async () => {
         try {
-          const response = await axiosClient.post('/api/auth/activateEmail', {
+          const response = await axiosClient.post('/api/auth/activate-email', {
             activation_token,
           })
           if (response.data.success) {
