@@ -1,52 +1,29 @@
-import {
-  AppBar,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-  Tooltip,
-  IconButton,
-  ListItemIcon,
-} from '@mui/material'
+import { AppBar, Menu, MenuItem, Toolbar, Typography } from '@mui/material'
 import React from 'react'
 import { useStyles } from './style'
-import { Add, Apps, Logout } from '@mui/icons-material'
+import { Add, Apps } from '@mui/icons-material'
 import { Avatar } from '@mui/material'
 import { useState } from 'react'
 import CreateClass from '../classroom/components/CreateClass/CreateClass'
 import JoinClass from '../classroom/components/JoinClass/JoinClass'
-import { useHistory } from 'react-router'
 const Header = ({ children }) => {
   const classes = useStyles()
-  const history = useHistory()
-  //handle toggle
-  const [anchorElClass, setAnchorElClass] = useState(null)
-  const [anchorElProfile, setAnchorElProfile] = useState(null)
-  const handleClickClass = (event) => {
-    setAnchorElClass(event.currentTarget)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
   }
-  const handleCloseClass = () => {
-    setAnchorElClass(null)
-  }
-  const handleClickProfile = (event) => {
-    setAnchorElProfile(event.currentTarget)
-  }
-  const handleCloseProfile = () => {
-    setAnchorElProfile(null)
+  const handleClose = () => {
+    setAnchorEl(null)
   }
   const [createClassDialog, setCreateClassDialog] = useState(false)
   const [joinClassDialog, setJoinClassDialog] = useState(false)
   const handleCreate = () => {
-    handleCloseClass()
+    handleClose()
     setCreateClassDialog(true)
   }
   const handleJoin = () => {
-    handleCloseClass()
+    handleClose()
     setJoinClassDialog(true)
-  }
-  const logout = () => {
-    localStorage.clear()
-    history.push('/login')
   }
   return (
     <div className={classes.root}>
@@ -63,75 +40,20 @@ const Header = ({ children }) => {
             </Typography>
           </div>
           <div className={classes.header_wrapper_right}>
-            <Add className={classes.icon} onClick={handleClickClass} />
+            <Add className={classes.icon} onClick={handleClick} />
             <Apps className={classes.icon} />
             <Menu
               id="simple-menu"
-              anchorEl={anchorElClass}
+              anchorEl={anchorEl}
               keepMounted
-              open={Boolean(anchorElClass)}
-              onClose={handleCloseClass}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
             >
               <MenuItem onClick={handleJoin}>Join class</MenuItem>
               <MenuItem onClick={handleCreate}>Create class</MenuItem>
             </Menu>
             <div>
-              <Tooltip title="Account settings">
-                <IconButton
-                  onClick={handleClickProfile}
-                  size="small"
-                  sx={{ ml: 2 }}
-                >
-                  <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-                </IconButton>
-              </Tooltip>
-              <Menu
-                anchorEl={anchorElProfile}
-                open={Boolean(anchorElProfile)}
-                onClose={handleCloseProfile}
-                onClick={handleCloseProfile}
-                PaperProps={{
-                  elevation: 0,
-                  sx: {
-                    overflow: 'visible',
-                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                    mt: 1.5,
-                    '& .MuiAvatar-root': {
-                      width: 32,
-                      height: 32,
-                      ml: -0.5,
-                      mr: 1,
-                    },
-                    '&:before': {
-                      content: '""',
-                      display: 'block',
-                      position: 'absolute',
-                      top: 0,
-                      right: 14,
-                      width: 10,
-                      height: 10,
-                      transform: 'translateY(-50%) rotate(45deg)',
-                      zIndex: 0,
-                    },
-                  },
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              >
-                <MenuItem>
-                  <Avatar /> Profile
-                </MenuItem>
-                <MenuItem>
-                  <Avatar /> My account
-                </MenuItem>
-
-                <MenuItem onClick={logout}>
-                  <ListItemIcon>
-                    <Logout fontSize="small" />
-                  </ListItemIcon>
-                  Logout
-                </MenuItem>
-              </Menu>
+              <Avatar className={classes.icon} />
             </div>
           </div>
         </Toolbar>
