@@ -11,9 +11,22 @@ import {
 import { styled } from '@mui/styles'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import axiosClient from '../../axiosClient'
-import { Link } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 import { showSuccessMsg, showErrMsg } from '../utils/Notifications'
 import { isEmail } from '../utils/Validation'
+import GoogleLogin from 'react-google-login'
+import GoogleIcon from '@mui/icons-material/Google'
+const GoogleButton = styled(Button)({
+  width: '100%',
+  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  border: 0,
+  borderRadius: 3,
+  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  color: 'white',
+  height: 48,
+  padding: '0 30px',
+  marginBottom: '15px',
+})
 const RegisterButton = styled(Button)({
   width: '100%',
   border: 0,
@@ -24,6 +37,7 @@ const RegisterButton = styled(Button)({
   marginBottom: '15px',
 })
 export default function Register() {
+  const history = useHistory()
   const [disabled, setDisabled] = useState(false)
   const [emailError, setEmailError] = useState(false)
   const [usernameError, setUsernameError] = useState(false)
@@ -72,7 +86,25 @@ export default function Register() {
     }
     setDisabled(false)
   }
-
+  const responseGoogle = async (response) => {
+    try {
+      const res = await axiosClient.post('/api/auth/google-signup', {
+        tokenId: response.tokenId,
+      })
+      if (res.data.success) {
+        setMsg({ err: '', success: res.data.message })
+        history.push(`/activateEmail/${res.data.activation_token}`)
+      }
+      if (!res.data.success) {
+        console.log(res.data)
+        setMsg({ err: res.data.message, success: '' })
+      }
+    } catch (err) {
+      console.log(err.response)
+      err.response.data.message &&
+        setMsg({ err: err.response.data.message, success: '' })
+    }
+  }
   return (
     <Container component="main" maxWidth="sm">
       <Box
@@ -156,6 +188,21 @@ export default function Register() {
           >
             Register
           </RegisterButton>
+          <GoogleLogin
+            clientId="358036581199-d9odgr20b7jarvkv1falnsbq20cu2mt2.apps.googleusercontent.com"
+            buttonText="Login with Google"
+            render={(renderProps) => (
+              <GoogleButton
+                onClick={renderProps.onClick}
+                startIcon={<GoogleIcon />}
+              >
+                Sign up with google
+              </GoogleButton>
+            )}
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy={'single_host_origin'}
+          />
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link to="/login" variant="body2">
