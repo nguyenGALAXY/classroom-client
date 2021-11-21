@@ -9,6 +9,8 @@ import styled from '@emotion/styled'
 import { useHistory } from 'react-router-dom'
 import { IconButton } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
+import { useDispatch, useSelector } from 'react-redux'
+import { userLogout } from 'src/redux/userSlice'
 
 const HeaderWrapper = styled.div({
   display: 'flex',
@@ -41,6 +43,8 @@ const MyAdd = styled(Add)({
 const Header = ({ children }) => {
   //const [anchorEl, setAnchorEl] = useState(null)
   const history = useHistory()
+  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.user)
   const [anchorElClassroom, setAnchorElClassroom] = useState(null)
   const [anchorElProfile, setAnchorElProfile] = useState(null)
   const handleClick = (event) => {
@@ -51,6 +55,7 @@ const Header = ({ children }) => {
   }
   const handleCloseProfileMenu = () => {
     setAnchorElProfile(null)
+    history.push('/profile')
   }
   const handleMenuProfile = (event) => {
     setAnchorElProfile(event.currentTarget)
@@ -68,6 +73,7 @@ const Header = ({ children }) => {
   const handleLogout = () => {
     localStorage.clear()
     history.push('/login')
+    dispatch(userLogout())
   }
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -109,7 +115,7 @@ const Header = ({ children }) => {
                 onClick={handleMenuProfile}
                 color="inherit"
               >
-                <MyAvatar />
+                <MyAvatar src={user.picture} />
               </IconButton>
               <Menu
                 id="menu-appbar"

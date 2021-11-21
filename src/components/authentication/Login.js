@@ -19,6 +19,8 @@ import axiosClient from '../../axiosClient'
 import { useHistory, Link } from 'react-router-dom'
 import { showSuccessMsg, showErrMsg } from '../utils/Notifications'
 import GoogleLogin from 'react-google-login'
+import { useDispatch } from 'react-redux'
+import { userLogin } from 'src/redux/userSlice'
 const theme = createTheme()
 const GoogleButton = styled(Button)({
   width: '100%',
@@ -42,6 +44,7 @@ const SubmitButton = styled(Button)({
 })
 export default function SignIn() {
   const history = useHistory()
+  const dispatch = useDispatch()
   const [disabled, setDisabled] = useState(false)
   const [msg, setMsg] = useState({ err: '', success: '' })
 
@@ -67,6 +70,7 @@ export default function SignIn() {
           'Authorization'
         ] = `Bearer ${localStorage.getItem('token')}`
         history.push('/home')
+        dispatch(userLogin())
       }
       if (!response.data.success) {
         setMsg({ err: response.data.message, success: '' })
@@ -89,6 +93,7 @@ export default function SignIn() {
         axiosClient.defaults.headers.common[
           'Authorization'
         ] = `Bearer ${localStorage.getItem('token')}`
+        dispatch(userLogin())
         history.push('/home')
       }
       if (!res.data.success) {
