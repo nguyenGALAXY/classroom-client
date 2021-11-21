@@ -11,7 +11,7 @@ import { IconButton } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
 import { userLogout } from 'src/redux/userSlice'
-
+import accountDefault from 'src/_mocks_/account'
 const HeaderWrapper = styled.div({
   display: 'flex',
   alignItems: 'center',
@@ -55,10 +55,13 @@ const Header = ({ children }) => {
   }
   const handleCloseProfileMenu = () => {
     setAnchorElProfile(null)
-    history.push('/profile')
   }
   const handleMenuProfile = (event) => {
     setAnchorElProfile(event.currentTarget)
+  }
+  const handleProfile = () => {
+    history.push('/profile')
+    handleCloseProfileMenu()
   }
   const [createClassDialog, setCreateClassDialog] = useState(false)
   const [joinClassDialog, setJoinClassDialog] = useState(false)
@@ -106,28 +109,28 @@ const Header = ({ children }) => {
               <MenuItem onClick={handleJoin}>Join class</MenuItem>
               <MenuItem onClick={handleCreate}>Create class</MenuItem>
             </Menu>
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenuProfile}
-                color="inherit"
-              >
-                <MyAvatar src={user.picture} />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElProfile}
-                keepMounted
-                open={Boolean(anchorElProfile)}
-                onClose={handleCloseProfileMenu}
-              >
-                <MenuItem onClick={handleCloseProfileMenu}>Profile</MenuItem>
-                <MenuItem onClick={handleLogout}>Log out</MenuItem>
-              </Menu>
-            </div>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenuProfile}
+              color="inherit"
+            >
+              <MyAvatar
+                src={user.picture ? user.picture : accountDefault.photoURL}
+              />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElProfile}
+              keepMounted
+              open={Boolean(anchorElProfile)}
+              onClose={handleCloseProfileMenu}
+            >
+              <MenuItem onClick={handleProfile}>Profile</MenuItem>
+              <MenuItem onClick={handleLogout}>Log out</MenuItem>
+            </Menu>
           </HeaderWrapperRight>
         </Toolbar>
       </MyAppBar>

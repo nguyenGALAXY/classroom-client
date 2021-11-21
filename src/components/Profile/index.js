@@ -16,7 +16,7 @@ import Layout from '../Layout'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchUser, updateUser } from 'src/redux/userSlice'
 import { showErrMsg } from '../utils/Notifications'
-
+import accountDefault from 'src/_mocks_/account'
 const MyBox = styled(Box)({
   borderRadius: 3,
   boxShadow: '#091e42 0px 1px 1px 0px',
@@ -111,7 +111,7 @@ export default function Profile() {
           >
             <Avatar
               sx={{ width: 120, height: 120 }}
-              src={user.picture}
+              src={user.picture ? user.picture : accountDefault.photoURL}
             ></Avatar>
             <Typography component="h1" variant="h5" mt={2}>
               Profile
