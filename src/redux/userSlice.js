@@ -33,7 +33,7 @@ const userSlice = createSlice({
       state.role = ''
     },
     userSetRole: (state, action) => {
-      state.role = action.payload.role
+      state.role = action.payload
     },
   },
   extraReducers: {

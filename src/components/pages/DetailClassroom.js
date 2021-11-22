@@ -21,6 +21,8 @@ import {
   TextField,
   Input,
 } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { userSetRole } from 'src/redux/userSlice'
 
 const MyContainer = styled(Container)({
   marginTop: '30px',
@@ -53,16 +55,69 @@ function DetailClassroom() {
   const [copyLink, setCopyLink] = useState(false)
   const [showInput, setShowInput] = useState(false)
   const [inputValue, setInputValue] = useState('')
+  const dispatch = useDispatch()
+  const userRole = useSelector((state) => state.user.role)
   let { id } = useParams()
   useEffect(() => {
     async function fetchData() {
-      const results = await axiosClient.get(`/api/classrooms/${id}`)
-
-      setClassroom(results.data)
+      try {
+        const results = await axiosClient.get(`/api/classrooms/${id}`)
+        dispatch(userSetRole(results.data.userRole))
+        setClassroom(results.data.classroom)
+      } catch (error) {
+        console.log(error)
+      }
     }
 
     fetchData()
   }, [])
+  const showClassCode = (classCode) => {
+    return (
+      <LinkCard>
+        <CardContent>
+          <CardHeader
+            action={
+              <IconButton aria-label="settings">
+                <MoreVertIcon />
+              </IconButton>
+            }
+            title="Class code"
+          >
+            <MoreVertIcon sx={{ mt: 3 }} />
+          </CardHeader>
+          <Typography variant="h2" color="text.secondary">
+            {classCode}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <CopyToClipboard text={classroom.id} onCopy={() => setCopyLink(true)}>
+            <Button size="large">copy link</Button>
+          </CopyToClipboard>
+        </CardActions>
+      </LinkCard>
+    )
+  }
+  const showNotification = (info) => {
+    return (
+      <LinkCard>
+        <CardContent>
+          <CardHeader
+            action={
+              <IconButton aria-label="settings">
+                <MoreVertIcon />
+              </IconButton>
+            }
+            title="Notifications"
+          >
+            <MoreVertIcon sx={{ mt: 3 }} />
+          </CardHeader>
+          <Typography variant="h6" color="text.secondary">
+            {info}
+          </Typography>
+        </CardContent>
+      </LinkCard>
+    )
+  }
   return (
     <Layout>
       <MyContainer>
@@ -94,31 +149,8 @@ function DetailClassroom() {
         </MyCard>
         <Grid container spacing={2}>
           <Grid item xs={3}>
-            <LinkCard>
-              <CardContent>
-                <CardHeader
-                  action={
-                    <IconButton aria-label="settings">
-                      <MoreVertIcon />
-                    </IconButton>
-                  }
-                  title="Class code"
-                >
-                  <MoreVertIcon sx={{ mt: 3 }} />
-                </CardHeader>
-                <Typography variant="h2" color="text.secondary">
-                  {classroom.id}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <CopyToClipboard
-                  text={classroom.id}
-                  onCopy={() => setCopyLink(true)}
-                >
-                  <Button size="large">copy link</Button>
-                </CopyToClipboard>
-              </CardActions>
-            </LinkCard>
+            {userRole === 'TEACHER' && showClassCode(classroom.id)}
+            {userRole === 'STUDENT' && showNotification('Some Information')}
           </Grid>
           <Grid item xs={9}>
             <WorkCard>

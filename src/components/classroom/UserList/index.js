@@ -15,6 +15,7 @@ import ListUsers from './List/ListUsers'
 import InviteModal from './InviteModal'
 import Layout from '../../Layout'
 import styled from '@emotion/styled'
+import { useSelector } from 'react-redux'
 
 const Header = styled('div')`
   display: flex;
@@ -29,7 +30,7 @@ const UserList = () => {
   const [openInviteModal, setOpenInviteModal] = useState(false)
   const [role, setRole] = useState('')
   const { id } = useParams()
-
+  const userRole = useSelector((state) => state.user.role)
   const history = useHistory()
 
   useEffect(() => {
@@ -62,7 +63,13 @@ const UserList = () => {
   const addNewUser = (newUser) => {
     setUsers((prevState) => [...prevState, newUser])
   }
-
+  const showButtonInvite = (nameButton, role) => {
+    return (
+      <Button onClick={() => handleOpenInviteModal(role)}>
+        {nameButton} <AddSharp />
+      </Button>
+    )
+  }
   const renderTeachersList = () => {
     return (
       <Grid>
@@ -70,9 +77,8 @@ const UserList = () => {
           <Typography sx={{ mt: 2, mb: 2 }} variant="h6" component="div">
             Teacher
           </Typography>
-          <Button onClick={() => handleOpenInviteModal('TEACHER')}>
-            Invite TEACHER <AddSharp />
-          </Button>
+          {userRole === 'TEACHER' &&
+            showButtonInvite('Invite TEACHER ', 'TEACHER')}
         </Box>
 
         <InviteModal
@@ -94,9 +100,8 @@ const UserList = () => {
           <Typography sx={{ mt: 2, mb: 2 }} variant="h6" component="div">
             Student
           </Typography>
-          <Button onClick={() => handleOpenInviteModal('STUDENT')}>
-            Invite STUDENT <AddSharp />
-          </Button>
+          {userRole === 'TEACHER' &&
+            showButtonInvite('Invite STUDENT ', 'STUDENT')}
         </Box>
 
         <InviteModal
