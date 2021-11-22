@@ -8,6 +8,7 @@ import {
   Box,
   IconButton,
   Avatar,
+  Button,
 } from '@mui/material'
 import { Add, Apps } from '@mui/icons-material'
 import CreateClass from '../classroom/components/CreateClass/CreateClass'
@@ -83,6 +84,9 @@ const Header = ({ children }) => {
     history.push('/login')
     dispatch(userLogout())
   }
+  const handleReturnHomepage = () => {
+    history.push('/')
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <MyAppBar position="static">
@@ -95,15 +99,16 @@ const Header = ({ children }) => {
         >
           <HeaderWrapper>
             {children}
-            <img
-              src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg"
-              alt="Classroom"
-            />
-            <Typography variant="h6">Classroom</Typography>
+            <Button onClick={handleReturnHomepage}>
+              <Avatar src="/book-stack.png" sx="mr: 2px" />
+              <Typography ml={1} variant="h6">
+                My Classroom
+              </Typography>
+            </Button>
           </HeaderWrapper>
           <HeaderWrapperRight>
             <MyAdd onClick={handleClick} />
-            <MyApps />
+            {/* <MyApps /> */}
             <Menu
               id="simple-menu"
               anchorEl={anchorElClassroom}

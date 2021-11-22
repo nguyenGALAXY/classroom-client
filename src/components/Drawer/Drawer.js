@@ -58,7 +58,7 @@ export default function TemporaryDrawer() {
         })}
       </List>
       <Divider />
-      <List>
+      {/* <List>
         {['All mail', 'Trash', 'Spam'].map((text, index) => (
           <ListItem button key={text}>
             <ListItemIcon>
@@ -67,7 +67,7 @@ export default function TemporaryDrawer() {
             <ListItemText primary={text} />
           </ListItem>
         ))}
-      </List>
+      </List> */}
     </Box>
   )
 
