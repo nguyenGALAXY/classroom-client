@@ -96,16 +96,14 @@ export default function SignIn() {
           'Authorization'
         ] = `Bearer ${localStorage.getItem('token')}`
 
-        const { user } = res.data
+        const user = res.data.userData
         dispatch(userLogin(user))
         history.push('/home')
       }
       if (!res.data.success) {
-        console.log(res.data)
         setMsg({ err: res.data.message, success: '' })
       }
     } catch (err) {
-      console.log(err.response)
       err.response.data.message &&
         setMsg({ err: err.response.data.message, success: '' })
     }

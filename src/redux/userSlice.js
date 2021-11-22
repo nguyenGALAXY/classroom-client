@@ -15,6 +15,7 @@ const initialState = {
   user: {},
   isLogged: false,
   message: '',
+  role: '',
 }
 
 const userSlice = createSlice({
@@ -28,6 +29,11 @@ const userSlice = createSlice({
     userLogout: (state) => {
       state.user = undefined
       state.isLogged = false
+      state.message = ''
+      state.role = ''
+    },
+    userSetRole: (state, action) => {
+      state.role = action.payload.role
     },
   },
   extraReducers: {
@@ -43,6 +49,6 @@ const userSlice = createSlice({
 
 const { actions, reducer } = userSlice
 
-export const { userLogin, userLogout } = actions
+export const { userLogin, userLogout, userSetRole } = actions
 
 export default reducer
