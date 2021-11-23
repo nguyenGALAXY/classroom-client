@@ -6,7 +6,6 @@ import {
   Toolbar,
   Typography,
   Box,
-  IconButton,
   Avatar,
   Button,
 } from '@mui/material'
@@ -15,9 +14,6 @@ import CreateClass from '../../components/CreateClass/CreateClass'
 import JoinClass from '../../components/JoinClass/JoinClass'
 import styled from '@emotion/styled'
 import { useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { userLogout } from 'src/redux/userSlice'
-import accountDefault from 'src/_mocks_/account'
 import AccountPopover from './AccountPopover'
 const HeaderWrapper = styled.div({
   display: 'flex',
@@ -32,10 +28,6 @@ const MyAppBar = styled(AppBar)({
   backgroundColor: '#ffffff',
   color: 'black',
 })
-const MyAvatar = styled(Avatar)({
-  color: '#5f656d',
-  cursor: 'pointer',
-})
 const MyAdd = styled(Add)({
   marginRight: '15px',
   color: '#5f656d',
@@ -44,26 +36,14 @@ const MyAdd = styled(Add)({
 const Header = ({ children }) => {
   //const [anchorEl, setAnchorEl] = useState(null)
   const history = useHistory()
-  const dispatch = useDispatch()
-  const user = useSelector((state) => state.user.user)
   const [anchorElClassroom, setAnchorElClassroom] = useState(null)
-  const [anchorElProfile, setAnchorElProfile] = useState(null)
   const handleClick = (event) => {
     setAnchorElClassroom(event.currentTarget)
   }
   const handleCloseClassroomMenu = () => {
     setAnchorElClassroom(null)
   }
-  const handleCloseProfileMenu = () => {
-    setAnchorElProfile(null)
-  }
-  const handleMenuProfile = (event) => {
-    setAnchorElProfile(event.currentTarget)
-  }
-  const handleProfile = () => {
-    history.push('/profile')
-    handleCloseProfileMenu()
-  }
+
   const [createClassDialog, setCreateClassDialog] = useState(false)
   const [joinClassDialog, setJoinClassDialog] = useState(false)
   const handleCreate = () => {
@@ -73,11 +53,6 @@ const Header = ({ children }) => {
   const handleJoin = () => {
     handleCloseClassroomMenu()
     setJoinClassDialog(true)
-  }
-  const handleLogout = () => {
-    localStorage.clear()
-    history.push('/login')
-    dispatch(userLogout())
   }
   const handleReturnHomepage = () => {
     history.push('/')
@@ -113,28 +88,6 @@ const Header = ({ children }) => {
               <MenuItem onClick={handleJoin}>Join class</MenuItem>
               <MenuItem onClick={handleCreate}>Create class</MenuItem>
             </Menu>
-            {/* <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenuProfile}
-              color="inherit"
-            >
-              <MyAvatar
-                src={user.picture ? user.picture : accountDefault.photoURL}
-              />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElProfile}
-              keepMounted
-              open={Boolean(anchorElProfile)}
-              onClose={handleCloseProfileMenu}
-            >
-              <MenuItem onClick={handleProfile}>Profile</MenuItem>
-              <MenuItem onClick={handleLogout}>Log out</MenuItem>
-            </Menu> */}
             <AccountPopover />
           </HeaderWrapperRight>
         </Toolbar>
