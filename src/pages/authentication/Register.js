@@ -189,7 +189,7 @@ export default function Register() {
             Register
           </RegisterButton>
           <GoogleLogin
-            clientId={process.env.GOOGLE_LOGIN_CLIENTID}
+            clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENTID}
             buttonText="Login with Google"
             render={(renderProps) => (
               <GoogleButton
