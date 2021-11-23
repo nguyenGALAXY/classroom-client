@@ -14,7 +14,6 @@ export const createClassroom = createAsyncThunk(
   'classrooms/createClassroom',
   async (classroom) => {
     const response = await axiosClient.post('api/classrooms', classroom)
-    console.log(response.data)
     return response.data
   }
 )
