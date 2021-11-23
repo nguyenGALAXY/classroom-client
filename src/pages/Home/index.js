@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
-import ClassroomCard from '../classroom/components/classroomCard/ClassroomCard'
-import Layout from '../Layout'
+import ClassroomCard from './ClassroomCard/ClassroomCard'
+import Layout from 'src/Layout/Layout'
 import { useSelector } from 'react-redux'
 const Home = () => {
   const classrooms = useSelector((state) => state.classrooms.classrooms)

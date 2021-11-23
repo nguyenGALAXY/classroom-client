@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Modal, Grid, Typography, TextField, Button } from '@mui/material'
 import axiosClient from 'src/axiosClient'
-import { showErrMsg } from 'src/components/utils/Notifications'
-import { isEmail } from 'src/components/utils/Validation'
+import { showErrMsg } from 'src/utils/Notifications'
+import { isEmail } from 'src/utils/Validation'
 
 const style = {
   position: 'absolute',

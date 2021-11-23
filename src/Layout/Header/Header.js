@@ -10,15 +10,15 @@ import {
   Avatar,
   Button,
 } from '@mui/material'
-import { Add, Apps } from '@mui/icons-material'
-import CreateClass from '../classroom/components/CreateClass/CreateClass'
-import JoinClass from '../classroom/components/JoinClass/JoinClass'
+import { Add } from '@mui/icons-material'
+import CreateClass from '../../components/CreateClass/CreateClass'
+import JoinClass from '../../components/JoinClass/JoinClass'
 import styled from '@emotion/styled'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { userLogout } from 'src/redux/userSlice'
 import accountDefault from 'src/_mocks_/account'
-
+import AccountPopover from './AccountPopover'
 const HeaderWrapper = styled.div({
   display: 'flex',
   alignItems: 'center',
@@ -33,11 +33,6 @@ const MyAppBar = styled(AppBar)({
   color: 'black',
 })
 const MyAvatar = styled(Avatar)({
-  color: '#5f656d',
-  cursor: 'pointer',
-})
-const MyApps = styled(Apps)({
-  marginRight: '15px',
   color: '#5f656d',
   cursor: 'pointer',
 })
@@ -108,7 +103,6 @@ const Header = ({ children }) => {
           </HeaderWrapper>
           <HeaderWrapperRight>
             <MyAdd onClick={handleClick} />
-            {/* <MyApps /> */}
             <Menu
               id="simple-menu"
               anchorEl={anchorElClassroom}
@@ -119,7 +113,7 @@ const Header = ({ children }) => {
               <MenuItem onClick={handleJoin}>Join class</MenuItem>
               <MenuItem onClick={handleCreate}>Create class</MenuItem>
             </Menu>
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
@@ -140,7 +134,8 @@ const Header = ({ children }) => {
             >
               <MenuItem onClick={handleProfile}>Profile</MenuItem>
               <MenuItem onClick={handleLogout}>Log out</MenuItem>
-            </Menu>
+            </Menu> */}
+            <AccountPopover />
           </HeaderWrapperRight>
         </Toolbar>
       </MyAppBar>

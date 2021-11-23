@@ -13,7 +13,7 @@ import { AddSharp, ArrowBackIosNew } from '@mui/icons-material'
 import partition from 'lodash/partition'
 import ListUsers from './List/ListUsers'
 import InviteModal from './InviteModal'
-import Layout from '../../Layout'
+import Layout from '../../../Layout/Layout'
 import styled from '@emotion/styled'
 import { useSelector } from 'react-redux'
 

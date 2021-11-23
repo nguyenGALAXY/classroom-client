@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Avatar, Button, Box, Typography, Container } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import axiosClient from '../../axiosClient'
-import { showSuccessMsg, showErrMsg } from '../utils/Notifications'
+import { showSuccessMsg, showErrMsg } from '../../utils/Notifications'
 import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
 export default function ActivationEmail() {

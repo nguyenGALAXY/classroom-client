@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import axiosClient from '../../axiosClient'
+import axiosClient from '../axiosClient'
 
 export const fetchClassrooms = createAsyncThunk(
   'classrooms/fetchClassrooms',
