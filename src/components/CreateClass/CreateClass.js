@@ -1,5 +1,5 @@
 import { Dialog } from '@mui/material'
-import { fetchClassrooms, createClassroom } from '../../classroomsSlice'
+import { fetchClassrooms, createClassroom } from '../../redux/classroomsSlice'
 import { useEffect } from 'react'
 import Form from './Form'
 import { useDispatch } from 'react-redux'

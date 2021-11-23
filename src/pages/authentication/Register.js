@@ -12,8 +12,8 @@ import { styled } from '@mui/styles'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import axiosClient from '../../axiosClient'
 import { useHistory, Link } from 'react-router-dom'
-import { showSuccessMsg, showErrMsg } from '../utils/Notifications'
-import { isEmail } from '../utils/Validation'
+import { showSuccessMsg, showErrMsg } from '../../utils/Notifications'
+import { isEmail } from '../../utils/Validation'
 import GoogleLogin from 'react-google-login'
 import GoogleIcon from '@mui/icons-material/Google'
 const GoogleButton = styled(Button)({
@@ -189,7 +189,7 @@ export default function Register() {
             Register
           </RegisterButton>
           <GoogleLogin
-            clientId="358036581199-d9odgr20b7jarvkv1falnsbq20cu2mt2.apps.googleusercontent.com"
+            clientId={process.env.GOOGLE_LOGIN_CLIENTID}
             buttonText="Login with Google"
             render={(renderProps) => (
               <GoogleButton

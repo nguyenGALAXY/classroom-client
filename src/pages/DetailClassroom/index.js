@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Layout from '../Layout'
+import Layout from '../../Layout/Layout'
 import axiosClient from '../../axiosClient'
 import { useParams } from 'react-router-dom'
 import styled from '@emotion/styled'

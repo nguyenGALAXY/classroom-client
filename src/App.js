@@ -1,5 +1,5 @@
 import React from 'react'
-import Router from './components/Routes'
+import Router from './Routes'
 import { CssBaseline } from '@mui/material'
 import './app.css'
 import { fetchUser } from './redux/userSlice'

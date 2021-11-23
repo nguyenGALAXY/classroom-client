@@ -17,7 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { styled } from '@mui/styles'
 import axiosClient from '../../axiosClient'
 import { useHistory, Link } from 'react-router-dom'
-import { showSuccessMsg, showErrMsg } from '../utils/Notifications'
+import { showSuccessMsg, showErrMsg } from '../../utils/Notifications'
 import GoogleLogin from 'react-google-login'
 import { useDispatch } from 'react-redux'
 import { userLogin } from 'src/redux/userSlice'
@@ -47,7 +47,6 @@ export default function SignIn() {
   const dispatch = useDispatch()
   const [disabled, setDisabled] = useState(false)
   const [msg, setMsg] = useState({ err: '', success: '' })
-
   const isAuthenticated = !!localStorage.getItem('token')
   if (isAuthenticated) {
     history.push('/home')
@@ -173,7 +172,7 @@ export default function SignIn() {
           </Box>
 
           <GoogleLogin
-            clientId="358036581199-d9odgr20b7jarvkv1falnsbq20cu2mt2.apps.googleusercontent.com"
+            clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENTID}
             buttonText="Login with Google"
             render={(renderProps) => (
               <GoogleButton

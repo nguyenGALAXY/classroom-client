@@ -1,6 +1,6 @@
 import React from 'react'
 import { Redirect, Route } from 'react-router-dom'
-import axiosClient from '../axiosClient'
+import axiosClient from './axiosClient'
 
 function ProtectedRoute({ component: Component, ...restOfProps }) {
   const isAuthenticated = !!localStorage.getItem('token')

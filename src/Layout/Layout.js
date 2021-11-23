@@ -1,4 +1,4 @@
-import Drawer from '../components/Drawer/Drawer'
+import Drawer from './Drawer/Drawer'
 import React from 'react'
 const Layout = ({ children }) => {
   return (
