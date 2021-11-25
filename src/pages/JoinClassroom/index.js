@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
-import axiosClient from '../../../axiosClient'
-import Header from '../../../Layout/Header/Header'
+import axiosClient from '../../axiosClient'
+import Header from '../../Layout/Header/Header'
 import { Box, Button, CircularProgress } from '@mui/material'
 
 function useQuery() {

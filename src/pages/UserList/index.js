@@ -13,7 +13,7 @@ import { AddSharp, ArrowBackIosNew } from '@mui/icons-material'
 import partition from 'lodash/partition'
 import ListUsers from './List/ListUsers'
 import InviteModal from './InviteModal'
-import Layout from '../../../Layout/Layout'
+import Layout from '../../Layout/Layout'
 import styled from '@emotion/styled'
 import { useSelector } from 'react-redux'
 
@@ -63,6 +63,11 @@ const UserList = () => {
   const addNewUser = (newUser) => {
     setUsers((prevState) => [...prevState, newUser])
   }
+
+  const removeUser = (userId) => {
+    setUsers((prevState) => prevState.filter((user) => user.userId !== userId))
+  }
+
   const showButtonInvite = (nameButton, role) => {
     return (
       <Button onClick={() => handleOpenInviteModal(role)}>
@@ -88,7 +93,7 @@ const UserList = () => {
           role={role}
           addNewUser={addNewUser}
         />
-        <ListUsers users={teachers} />
+        <ListUsers users={teachers} removeUser={removeUser} />
       </Grid>
     )
   }
@@ -111,7 +116,7 @@ const UserList = () => {
           role={role}
           addNewUser={addNewUser}
         />
-        <ListUsers users={students} />
+        <ListUsers users={students} removeUser={removeUser} />
       </Grid>
     )
   }

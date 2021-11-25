@@ -13,9 +13,9 @@ import Login from './pages/authentication/Login'
 import ActivationEmail from './pages/authentication/ActivationEmail'
 import NotFound from './pages/NotFound'
 import DetailClassroom from './pages/DetailClassroom'
-import JoinClassroom from './components/classroom/JoinClassroom'
+import JoinClassroom from './pages/JoinClassroom'
 import AcceptInvite from './pages/AcceptInvite'
-import UserList from './components/classroom/UserList'
+import UserList from './pages/UserList'
 import Profile from './pages/Profile'
 
 export default function Routes() {
