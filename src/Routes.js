@@ -17,7 +17,7 @@ import JoinClassroom from './pages/JoinClassroom'
 import AcceptInvite from './pages/AcceptInvite'
 import UserList from './pages/UserList'
 import Profile from './pages/Profile'
-
+import GradeAssignment from './pages/GradeAssignment'
 export default function Routes() {
   return (
     <Router>
@@ -57,6 +57,11 @@ export default function Routes() {
             exact
             path="/classrooms/:id/user-list"
             component={UserList}
+          />
+          <ProtectedRoute
+            exact
+            path="/gradeStructure"
+            component={GradeAssignment}
           />
           <Route path="*">
             <NotFound />

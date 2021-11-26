@@ -1,5 +1,9 @@
 import { Dialog } from '@mui/material'
-import { fetchClassrooms, createClassroom } from '../../redux/classroomsSlice'
+import {
+  fetchClassrooms,
+  createClassroom,
+  isLoading,
+} from '../../redux/classroomsSlice'
 import { useEffect } from 'react'
 import Form from './Form'
 import { useDispatch } from 'react-redux'
@@ -7,7 +11,6 @@ import { useDispatch } from 'react-redux'
 export default function CreateClass(props) {
   const { createClassDialog, setCreateClassDialog } = props
   const dispatch = useDispatch()
-
   const handleClose = () => {
     setCreateClassDialog(false)
   }
@@ -20,6 +23,7 @@ export default function CreateClass(props) {
   }
   useEffect(() => {
     async function fetchAPI() {
+      dispatch(isLoading())
       dispatch(fetchClassrooms())
     }
 

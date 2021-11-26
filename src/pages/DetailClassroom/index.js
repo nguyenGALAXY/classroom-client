@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../Layout/Layout'
 import axiosClient from '../../axiosClient'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import styled from '@emotion/styled'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Link } from 'react-router-dom'
@@ -55,6 +55,7 @@ function DetailClassroom() {
   const [copyLink, setCopyLink] = useState(false)
   const [showInput, setShowInput] = useState(false)
   const [inputValue, setInputValue] = useState('')
+  const history = useHistory()
   const dispatch = useDispatch()
   const userRole = useSelector((state) => state.user.role)
   let { id } = useParams()
@@ -121,6 +122,10 @@ function DetailClassroom() {
       </LinkCard>
     )
   }
+  const handleEditGrade = (event) => {
+    event.preventDefault()
+    history.push('/gradeStructure')
+  }
   return (
     <Layout>
       <MyContainer>
@@ -154,6 +159,9 @@ function DetailClassroom() {
           <Grid item xs={3}>
             {userRole === 'TEACHER' && showClassCode(classroom.id)}
             {userRole === 'STUDENT' && showNotification('Some Information')}
+            <Button size="small" onClick={handleEditGrade}>
+              Edit grade
+            </Button>
           </Grid>
           <Grid item xs={9}>
             <WorkCard>

@@ -19,15 +19,21 @@ export const createClassroom = createAsyncThunk(
 )
 const initialState = {
   classrooms: [],
+  isLoading: false,
 }
 
 const classroomsSlice = createSlice({
   name: 'classrooms',
   initialState,
-  reducers: {},
+  reducers: {
+    isLoading: (state) => {
+      state.isLoading = true
+    },
+  },
   extraReducers: {
     [fetchClassrooms.fulfilled]: (state, action) => {
       state.classrooms = action.payload
+      state.isLoading = false
     },
     [createClassroom.fulfilled]: (state, action) => {
       state.classrooms = [action.payload, ...state.classrooms]
@@ -37,6 +43,6 @@ const classroomsSlice = createSlice({
 
 const { actions, reducer } = classroomsSlice
 
-export const { classroomsLoaded } = actions
+export const { classroomsLoaded, isLoading } = actions
 
 export default reducer
