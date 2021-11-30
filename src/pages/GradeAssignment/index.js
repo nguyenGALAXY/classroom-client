@@ -46,8 +46,7 @@ const GradeAssignment = () => {
     setListgrade(item)
     dispatch(
       arrangeGrade({
-        id1: listgrade[result.source.index].id,
-        id2: listgrade[result.destination.index].id,
+        item,
         classroomId: classroomGrades.classroomId,
       })
     )
@@ -71,7 +70,7 @@ const GradeAssignment = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axiosClient.get(`/api/classrooms/${id}/grades`)
-      setListgrade(response.data)
+      setListgrade(response.data.sort((a, b) => a.index - b.index))
     }
 
     fetchData()

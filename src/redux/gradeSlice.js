@@ -12,10 +12,10 @@ import axiosClient from '../axiosClient'
 export const arrangeGrade = createAsyncThunk(
   'classrooms/arrangeGrade',
   async (arg) => {
-    const id1 = arg.id1
-    const id2 = arg.id2
+    const item = arg.item
     const response = await axiosClient.put(
-      `api/classrooms/${arg.classroomId}/grades/arrange/${id1}/${id2}`
+      `api/classrooms/${arg.classroomId}/grades/arrange`,
+      item
     )
     return response.data
   }
