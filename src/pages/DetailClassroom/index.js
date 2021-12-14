@@ -119,7 +119,7 @@ function DetailClassroom() {
       </LinkCard>
     )
   }
-  const showGradeStructure = (grades) => {
+  const showGradeStructure = (grades, userRole) => {
     return (
       <LinkCard>
         <CardContent>
@@ -163,11 +163,13 @@ function DetailClassroom() {
             </List>
           )}
         </CardContent>
-        <CardActions>
-          <Button size="small" onClick={handleEditGrade}>
-            Edit grade
-          </Button>
-        </CardActions>
+        {userRole === 'TEACHER' && (
+          <CardActions>
+            <Button size="small" onClick={handleEditGrade}>
+              Edit grade
+            </Button>
+          </CardActions>
+        )}
       </LinkCard>
     )
   }
@@ -222,6 +224,13 @@ function DetailClassroom() {
             >
               list user
             </Button>
+            <Button
+              size="medium"
+              component={Link}
+              to={`/classrooms/${id}/detail-grades`}
+            >
+              Grades
+            </Button>
             <Button size="small">learn more</Button>
           </MyCardActions>
         </MyCard>
@@ -229,7 +238,7 @@ function DetailClassroom() {
           <Grid item xs={3}>
             {userRole === 'TEACHER' && showClassCode(classroom.id)}
             {userRole === 'STUDENT' && showNotification('Some Information')}
-            {showGradeStructure(classroomGrades.grades)}
+            {showGradeStructure(classroomGrades.grades, userRole)}
           </Grid>
           <Grid item xs={9}>
             <WorkCard>
