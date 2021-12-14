@@ -20,7 +20,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import { styled } from '@mui/styles'
 import { ArrowBackIosNew } from '@mui/icons-material'
 import { NoDataIll } from 'src/_mocks_/Illustrations'
-import { useSelector } from 'react-redux'
+import accountDefault from 'src/_mocks_/account'
 import _ from 'lodash'
 import lodashGet from 'lodash/get'
 const CustomCard = styled(Card)`
@@ -97,6 +97,19 @@ const DetailGrades = () => {
           return `${params.getValue(params.id, 'username')}`
         return `${fisrtName || ''} ${lastName || ''}`
       },
+      renderCell: (params) => (
+        <>
+          <Avatar
+            sx={{ width: 30, height: 30, mr: 1 }}
+            src={
+              params.getValue(params.id, 'picture')
+                ? params.getValue(params.id, 'picture')
+                : accountDefault.photoURL
+            }
+          ></Avatar>
+          {params.value}
+        </>
+      ),
     },
   ])
   let { id } = useParams()
@@ -147,6 +160,7 @@ const DetailGrades = () => {
     'User.firstName',
     'User.lastName',
     'point',
+    'User.picture',
   ]
   let keymapUser = {
     'User.id': 'id',
@@ -154,6 +168,7 @@ const DetailGrades = () => {
     'User.firstName': 'firstName',
     'User.lastName': 'lastName',
     'User.studentId': 'studentId',
+    'User.picture': 'picture',
   }
   useEffect(() => {
     const getGradeDetail = async () => {
@@ -193,10 +208,13 @@ const DetailGrades = () => {
               const userFilter = g.users.filter(
                 (u) => lodashGet(u, 'User.id') === user.userId
               )
-              if (userFilter[0].point) {
-                row[0][g.name.split(' ').join('')] = userFilter[0].point
-              } else {
-                row[0][g.name.split(' ').join('')] = null
+              //Check student exist in array user
+              if (userFilter.length > 0) {
+                if (userFilter[0].point) {
+                  row[0][g.name.split(' ').join('')] = userFilter[0].point
+                } else {
+                  row[0][g.name.split(' ').join('')] = null
+                }
               }
             })
             arrData.push(row[0])
@@ -213,6 +231,7 @@ const DetailGrades = () => {
     }
     getGradeDetail()
   }, [])
+  console.log('User', rows)
   return (
     <Layout>
       <ThemeProvider theme={theme}>
