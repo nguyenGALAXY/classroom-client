@@ -231,32 +231,28 @@ const DetailGrades = () => {
     }
     getGradeDetail()
   }, [])
-  console.log('User', rows)
   return (
     <Layout>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <CustomCard sx={{ minWidth: 1200 }} className={`sticky`}>
-            <CardHeader
-              avatar={
-                <IconButton onClick={goBack}>
-                  <ArrowBackIosNew />
-                </IconButton>
-              }
-              title={<Typography variant="h6">Grade Detail</Typography>}
-            />
-          </CustomCard>
-        </Box>
-        {!rows.length ? showNoDataMsg() : renderTableGrade(rows)}
-      </ThemeProvider>
+      <Box
+        sx={{
+          marginTop: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <CustomCard sx={{ minWidth: 1200 }} className={`sticky`}>
+          <CardHeader
+            avatar={
+              <IconButton onClick={goBack}>
+                <ArrowBackIosNew />
+              </IconButton>
+            }
+            title={<Typography variant="h6">Grade Detail</Typography>}
+          />
+        </CustomCard>
+      </Box>
+      {!rows.length ? showNoDataMsg() : renderTableGrade(rows)}
     </Layout>
   )
 }

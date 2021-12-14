@@ -13,7 +13,6 @@ import {
 } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import GoogleIcon from '@mui/icons-material/Google'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { styled } from '@mui/styles'
 import axiosClient from '../../axiosClient'
 import { useHistory, Link } from 'react-router-dom'
@@ -21,7 +20,7 @@ import { showSuccessMsg, showErrMsg } from '../../utils/Notifications'
 import GoogleLogin from 'react-google-login'
 import { useDispatch } from 'react-redux'
 import { userLogin } from 'src/redux/userSlice'
-const theme = createTheme()
+
 const GoogleButton = styled(Button)({
   width: '100%',
   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -109,90 +108,82 @@ export default function SignIn() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="sm">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Login
-          </Typography>
-          {msg.success && showSuccessMsg(msg.success)}
-          {msg.err && showErrMsg(msg.err)}
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-
-            <SubmitButton
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={disabled}
-            >
-              Sign In
-            </SubmitButton>
-          </Box>
-
-          <GoogleLogin
-            clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENTID}
-            buttonText="Login with Google"
-            render={(renderProps) => (
-              <GoogleButton
-                onClick={renderProps.onClick}
-                startIcon={<GoogleIcon />}
-              >
-                Sign In with google
-              </GoogleButton>
-            )}
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={'single_host_origin'}
+    <Container component="main" maxWidth="sm">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Login
+        </Typography>
+        {msg.success && showSuccessMsg(msg.success)}
+        {msg.err && showErrMsg(msg.err)}
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="email"
+            autoComplete="email"
+            autoFocus
           />
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
-              <Link to="/register">{'Dont have an account? Sign up'}</Link>
-            </Grid>
-          </Grid>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+          />
+
+          <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          />
+
+          <SubmitButton
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={disabled}
+          >
+            Sign In
+          </SubmitButton>
         </Box>
-      </Container>
-    </ThemeProvider>
+
+        <GoogleLogin
+          clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENTID}
+          buttonText="Login with Google"
+          render={(renderProps) => (
+            <GoogleButton
+              onClick={renderProps.onClick}
+              startIcon={<GoogleIcon />}
+            >
+              Sign In with google
+            </GoogleButton>
+          )}
+          onSuccess={responseGoogle}
+          onFailure={responseGoogle}
+          cookiePolicy={'single_host_origin'}
+        />
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <Link to="/register">{'Dont have an account? Sign up'}</Link>
+          </Grid>
+        </Grid>
+      </Box>
+    </Container>
   )
 }

@@ -98,137 +98,134 @@ export default function Profile() {
   }
   return (
     <Layout>
-      <ThemeProvider theme={theme}>
-        <Container component="main" maxWidth="sm">
-          <CssBaseline />
-          <Box
-            sx={{
-              marginTop: 8,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Avatar
-              sx={{ width: 120, height: 120 }}
-              src={user.picture ? user.picture : accountDefault.photoURL}
-            ></Avatar>
-            <Typography component="h1" variant="h5" mt={2}>
-              Profile
-            </Typography>
-          </Box>
-          {auth.message && showErrMsg(auth.message)}
-          <Grid
-            container
-            justifyContent="space-between"
-            direction="row"
-            alignItems="center"
-          >
-            {/* Label Information */}
-            <Grid item>
-              <LabelBox component="h1" variant="h5" mt={2}>
-                Information
-              </LabelBox>
-            </Grid>
-            <Grid item>{isEdit === false && showButtonEdit()}</Grid>
+      <Container component="main" maxWidth="sm">
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar
+            sx={{ width: 120, height: 120 }}
+            src={user.picture ? user.picture : accountDefault.photoURL}
+          ></Avatar>
+          <Typography component="h1" variant="h5" mt={2}>
+            Profile
+          </Typography>
+        </Box>
+        {auth.message && showErrMsg(auth.message)}
+        <Grid
+          container
+          justifyContent="space-between"
+          direction="row"
+          alignItems="center"
+        >
+          {/* Label Information */}
+          <Grid item>
+            <LabelBox component="h1" variant="h5" mt={2}>
+              Information
+            </LabelBox>
           </Grid>
+          <Grid item>{isEdit === false && showButtonEdit()}</Grid>
+        </Grid>
 
-          <MyBox
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            {/* Input first name */}
-            <InputBox>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <LabelInput elevation={0}>First Name</LabelInput>
-                </Grid>
-                <Grid item xs={8}>
-                  <WrapInforInput elevation={0}>
-                    {isEdit
-                      ? showTextInput('firstName', user.firstName)
-                      : user.firstName}
-                  </WrapInforInput>
-                </Grid>
+        <MyBox
+          component="form"
+          onSubmit={handleSubmit}
+          noValidate
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {/* Input first name */}
+          <InputBox>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <LabelInput elevation={0}>First Name</LabelInput>
               </Grid>
-            </InputBox>
-            {/* Input last name */}
-            <InputBox>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <LabelInput elevation={0}>Last Name</LabelInput>
-                </Grid>
-                <Grid item xs={8}>
-                  <WrapInforInput elevation={0}>
-                    {isEdit
-                      ? showTextInput('lastName', user.lastName)
-                      : user.lastName}
-                  </WrapInforInput>
-                </Grid>
+              <Grid item xs={8}>
+                <WrapInforInput elevation={0}>
+                  {isEdit
+                    ? showTextInput('firstName', user.firstName)
+                    : user.firstName}
+                </WrapInforInput>
               </Grid>
-            </InputBox>
-            {/* Input username */}
-            <InputBox>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <LabelInput elevation={0}>Username</LabelInput>
-                </Grid>
-                <Grid item xs={8}>
-                  <WrapInforInput elevation={0}>{user.username}</WrapInforInput>
-                </Grid>
+            </Grid>
+          </InputBox>
+          {/* Input last name */}
+          <InputBox>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <LabelInput elevation={0}>Last Name</LabelInput>
               </Grid>
-            </InputBox>
-            {/* Input student ID */}
-            <InputBox>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <LabelInput elevation={0}>Student ID</LabelInput>
-                </Grid>
-                <Grid item xs={8}>
-                  <WrapInforInput elevation={0}>
-                    {isEdit
-                      ? showTextInput('studentId', user.studentId)
-                      : user.studentId}
-                  </WrapInforInput>
-                </Grid>
+              <Grid item xs={8}>
+                <WrapInforInput elevation={0}>
+                  {isEdit
+                    ? showTextInput('lastName', user.lastName)
+                    : user.lastName}
+                </WrapInforInput>
               </Grid>
-            </InputBox>
-            {/* Input Phone number */}
-            <InputBox>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <LabelInput elevation={0}>Phone Number</LabelInput>
-                </Grid>
-                <Grid item xs={8}>
-                  <WrapInforInput elevation={0}>
-                    {isEdit ? showTextInput('phone', user.phone) : user.phone}
-                  </WrapInforInput>
-                </Grid>
+            </Grid>
+          </InputBox>
+          {/* Input username */}
+          <InputBox>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <LabelInput elevation={0}>Username</LabelInput>
               </Grid>
-            </InputBox>
-            {/* Input Email */}
-            <InputBox>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <LabelInput elevation={0}>Email</LabelInput>
-                </Grid>
-                <Grid item xs={8}>
-                  <WrapInforInput elevation={0}>{user.email}</WrapInforInput>
-                </Grid>
+              <Grid item xs={8}>
+                <WrapInforInput elevation={0}>{user.username}</WrapInforInput>
               </Grid>
-            </InputBox>
-            <Button disabled={inputDisabled} type="submit" variant="contained">
-              Save changes
-            </Button>
-          </MyBox>
-        </Container>
-      </ThemeProvider>
+            </Grid>
+          </InputBox>
+          {/* Input student ID */}
+          <InputBox>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <LabelInput elevation={0}>Student ID</LabelInput>
+              </Grid>
+              <Grid item xs={8}>
+                <WrapInforInput elevation={0}>
+                  {isEdit
+                    ? showTextInput('studentId', user.studentId)
+                    : user.studentId}
+                </WrapInforInput>
+              </Grid>
+            </Grid>
+          </InputBox>
+          {/* Input Phone number */}
+          <InputBox>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <LabelInput elevation={0}>Phone Number</LabelInput>
+              </Grid>
+              <Grid item xs={8}>
+                <WrapInforInput elevation={0}>
+                  {isEdit ? showTextInput('phone', user.phone) : user.phone}
+                </WrapInforInput>
+              </Grid>
+            </Grid>
+          </InputBox>
+          {/* Input Email */}
+          <InputBox>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <LabelInput elevation={0}>Email</LabelInput>
+              </Grid>
+              <Grid item xs={8}>
+                <WrapInforInput elevation={0}>{user.email}</WrapInforInput>
+              </Grid>
+            </Grid>
+          </InputBox>
+          <Button disabled={inputDisabled} type="submit" variant="contained">
+            Save changes
+          </Button>
+        </MyBox>
+      </Container>
     </Layout>
   )
 }
