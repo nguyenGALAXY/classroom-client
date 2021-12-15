@@ -194,6 +194,23 @@ const DetailGrades = () => {
               field: g.name.split(' ').join(''),
               headerName: g.name,
               width: 150,
+              renderCell: (params) => (
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 'bold',
+                    '& .point': {
+                      display: 'none',
+                    },
+                    '&:hover .point': {
+                      display: 'inline',
+                    },
+                  }}
+                >
+                  {params.value}
+                  <span className="point">__/{g.point}</span>
+                </Typography>
+              ),
             }
             tempCol.push(temp)
           })
