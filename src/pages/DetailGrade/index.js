@@ -11,28 +11,27 @@ import {
   CardContent,
   CardHeader,
   IconButton,
-  CssBaseline,
   Avatar,
+  Divider,
 } from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import Layout from '../../Layout/Layout'
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import { styled } from '@mui/styles'
 import { ArrowBackIosNew } from '@mui/icons-material'
 import { NoDataIll } from 'src/_mocks_/Illustrations'
 import accountDefault from 'src/_mocks_/account'
 import _ from 'lodash'
 import lodashGet from 'lodash/get'
+import { useSnackbar } from 'notistack'
+import NoDataDisplay from 'src/components/NoDataDisplay'
+import LoadingPage from 'src/components/LoadingPage'
+import { blue } from '@mui/material/colors'
 const CustomCard = styled(Card)`
   &.sticky {
     position: sticky;
     top: 10px;
     z-index: 2;
   }
-`
-const CustomTable = styled('div')`
-  height: 400;
-  width: '100%';
 `
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   border: 0,
@@ -77,12 +76,14 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
         : 'rgba(255,255,255,0.65)',
   },
 }))
-const theme = createTheme()
 const DetailGrades = () => {
   const history = useHistory()
+  const { enqueueSnackbar } = useSnackbar()
   const [listGradeStudent, setListGradeStudent] = useState(null)
   const [users, setUsers] = useState(null)
   const [rows, setRows] = useState([])
+  const { id } = useParams()
+  const [isLoading, setIsLoading] = useState(true)
   const [columns, setColumns] = useState([
     {
       field: 'fullName',
@@ -112,9 +113,40 @@ const DetailGrades = () => {
       ),
     },
   ])
-  let { id } = useParams()
   const goBack = () => {
     history.goBack()
+  }
+  const handleCommitCell = async (params) => {
+    const gradeEdited = listGradeStudent.filter(
+      (g) => g.name.split(' ').join('') === params.field
+    )
+    if (params.value > gradeEdited[0].point) {
+      enqueueSnackbar('Grade input out of total grade', { variant: 'error' })
+      setRows((prev) =>
+        prev.map((row) =>
+          row.id === params.id ? { ...row, [params.field]: null } : row
+        )
+      )
+      return
+    }
+    try {
+      const gradeId = gradeEdited[0].id
+      const userId = params.id
+      const response = await axiosClient.post(
+        `/api/classrooms/${id}/grades/${gradeId}/users/${userId}`,
+        {
+          point: params.value,
+        }
+      )
+      setRows((prev) =>
+        prev.map((row) =>
+          row.id === params.id ? { ...row, [params.field]: params.value } : row
+        )
+      )
+      enqueueSnackbar(response.data.message, { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar(error.message)
+    }
   }
   const renderTableGrade = (rows) => (
     <div style={{ height: 400, width: '100%' }}>
@@ -128,31 +160,13 @@ const DetailGrades = () => {
             headerHeight={150}
             hideFooter
             density="compact"
+            onCellEditCommit={handleCommitCell}
             sx={{ fontSize: '20px' }}
+            components={{ Toolbar: GridToolbar }}
           />
         </div>
       </div>
     </div>
-  )
-  const showNoDataMsg = () => (
-    <Box
-      sx={{
-        marginTop: 6,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Avatar
-        src={NoDataIll.photoURL}
-        alt={NoDataIll.displayName}
-        sx={{ width: 320, height: 320 }}
-      />
-      <Typography variant="h6">No Data to show</Typography>
-      <Typography variant="subtitle2">
-        Please check user list or grade structuce
-      </Typography>
-    </Box>
   )
   const mapUser = [
     'User.id',
@@ -188,12 +202,35 @@ const DetailGrades = () => {
         if (users && listGradeStudent) {
           let arrData = []
           let tempCol = []
-          //Add field to column
+          //Add grades field to column
           listGradeStudent.forEach((g) => {
             const temp = {
               field: g.name.split(' ').join(''),
               headerName: g.name,
+              type: 'number',
               width: 150,
+              editable: true,
+              renderHeader: (params) => (
+                <Grid
+                  container
+                  direction="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={2}
+                >
+                  <Grid item>
+                    <Typography sx={{ mb: 0.5 }} variant="h5">
+                      {g.name}
+                    </Typography>
+                    <Divider />
+                  </Grid>
+                  <Grid item>
+                    <Typography sx variant="subtitle1">
+                      Total grade: {g.point}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              ),
               renderCell: (params) => (
                 <Typography
                   variant="h5"
@@ -242,8 +279,9 @@ const DetailGrades = () => {
         }
         setListGradeStudent(listGradeStudent)
         setUsers(response.data.filter((user) => user.role === 'STUDENT'))
+        setIsLoading(false)
       } catch (error) {
-        console.log('Grade Detail Error', error)
+        enqueueSnackbar(error.message)
       }
     }
     getGradeDetail()
@@ -252,7 +290,8 @@ const DetailGrades = () => {
     <Layout>
       <Box
         sx={{
-          marginTop: 2,
+          mt: 2,
+          mb: 2,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -269,7 +308,19 @@ const DetailGrades = () => {
           />
         </CustomCard>
       </Box>
-      {!rows.length ? showNoDataMsg() : renderTableGrade(rows)}
+      {isLoading ? (
+        LoadingPage()
+      ) : (
+        <>
+          {!rows.length
+            ? NoDataDisplay({
+                msgSuggest: 'Please check user list or grade structuce',
+                photoURL: NoDataIll.photoURL,
+                displayName: NoDataIll.displayName,
+              })
+            : renderTableGrade(rows)}
+        </>
+      )}
     </Layout>
   )
 }
