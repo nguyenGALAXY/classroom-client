@@ -15,7 +15,13 @@ import {
   Divider,
 } from '@mui/material'
 import Layout from '../../Layout/Layout'
-import { DataGrid, GridToolbar } from '@mui/x-data-grid'
+import {
+  DataGrid,
+  GridToolbar,
+  GridFilterMenuItem,
+  SortGridMenuItems,
+  GridColumnMenuContainer,
+} from '@mui/x-data-grid'
 import { styled } from '@mui/styles'
 import { ArrowBackIosNew } from '@mui/icons-material'
 import { NoDataIll } from 'src/_mocks_/Illustrations'
@@ -25,7 +31,7 @@ import lodashGet from 'lodash/get'
 import { useSnackbar } from 'notistack'
 import NoDataDisplay from 'src/components/NoDataDisplay'
 import LoadingPage from 'src/components/LoadingPage'
-import { blue } from '@mui/material/colors'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 const CustomCard = styled(Card)`
   &.sticky {
     position: sticky;
@@ -76,6 +82,46 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
         : 'rgba(255,255,255,0.65)',
   },
 }))
+const ButtonMenuTable = styled(Button)({
+  justifyContent: 'flex-start',
+  color: '#000000',
+})
+function CustomColumnMenuComponent(props) {
+  const { hideMenu, currentColumn } = props
+  if (
+    currentColumn.field === 'fullName' ||
+    currentColumn.field === 'TotalGrade'
+  ) {
+    return (
+      <GridColumnMenuContainer
+        hideMenu={hideMenu}
+        currentColumn={currentColumn}
+      >
+        <SortGridMenuItems onClick={hideMenu} column={currentColumn} />
+        <GridFilterMenuItem onClick={hideMenu} column={currentColumn} />
+      </GridColumnMenuContainer>
+    )
+  }
+  return (
+    <GridColumnMenuContainer hideMenu={hideMenu} currentColumn={currentColumn}>
+      <Box
+        sx={{
+          width: 120,
+          height: '100%',
+        }}
+      >
+        <ButtonMenuTable fullWidth>Upload grades</ButtonMenuTable>
+        <ButtonMenuTable
+          name={currentColumn.field}
+          onClick={props.handleReturnGrades}
+          fullWidth
+        >
+          Return grades
+        </ButtonMenuTable>
+      </Box>
+    </GridColumnMenuContainer>
+  )
+}
 const DetailGrades = () => {
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar()
@@ -113,40 +159,86 @@ const DetailGrades = () => {
       ),
     },
   ])
+  const handleReturnGrades = async (event) => {
+    event.preventDefault()
+    const fieldName = event.target.name
+    const colGrades = rows.map((row) => {
+      const { id } = row
+      const point = row[fieldName]
+      const grades = listGradeStudent.filter(
+        (g) => g.name.split(' ').join('') === fieldName
+      )
+      return { userId: id, gradeId: grades[0].id, point: point }
+    })
+    try {
+      const response = await axiosClient.post(
+        `/api/classrooms/${id}/grades/${colGrades[0].gradeId}`,
+        {
+          colGrades,
+        }
+      )
+      const updatedGrade = response.data.data
+      updatedGrade.forEach((g) => {
+        setRows((prev) =>
+          prev.map((row) =>
+            row.id === g.userId ? { ...row, [fieldName]: g.point } : row
+          )
+        )
+      })
+      updateTotalGrades(rows)
+      enqueueSnackbar(response.data.message, { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' })
+    }
+  }
   const goBack = () => {
     history.goBack()
+  }
+  const updateTotalGrades = (rows) => {
+    rows.forEach((row) => {
+      let totalGradeRow = 0
+      for (const props in row) {
+        if (
+          props === 'firstName' ||
+          props === 'lastName' ||
+          props === 'picture' ||
+          props === 'username' ||
+          props === 'id' ||
+          props === 'TotalGrade'
+        ) {
+          continue
+        } else {
+          totalGradeRow += row[props]
+        }
+      }
+      setRows((prev) =>
+        prev.map((r) =>
+          r.id === row.id ? { ...r, TotalGrade: totalGradeRow } : r
+        )
+      )
+    })
   }
   const handleCommitCell = async (params) => {
     const gradeEdited = listGradeStudent.filter(
       (g) => g.name.split(' ').join('') === params.field
     )
     if (params.value > gradeEdited[0].point) {
-      enqueueSnackbar('Grade input out of total grade', { variant: 'error' })
       setRows((prev) =>
         prev.map((row) =>
           row.id === params.id ? { ...row, [params.field]: null } : row
         )
       )
+      enqueueSnackbar('Grade input out of total grade', { variant: 'error' })
       return
     }
-    try {
-      const gradeId = gradeEdited[0].id
-      const userId = params.id
-      const response = await axiosClient.post(
-        `/api/classrooms/${id}/grades/${gradeId}/users/${userId}`,
-        {
-          point: params.value,
-        }
+    setRows((prev) =>
+      prev.map((row) =>
+        row.id === params.id ? { ...row, [params.field]: params.value } : row
       )
-      setRows((prev) =>
-        prev.map((row) =>
-          row.id === params.id ? { ...row, [params.field]: params.value } : row
-        )
-      )
-      enqueueSnackbar(response.data.message, { variant: 'success' })
-    } catch (error) {
-      enqueueSnackbar(error.message)
-    }
+    )
+    enqueueSnackbar('Set grade success, please Return Grades to update', {
+      variant: 'success',
+    })
   }
   const renderTableGrade = (rows) => (
     <div style={{ height: 400, width: '100%' }}>
@@ -162,12 +254,73 @@ const DetailGrades = () => {
             density="compact"
             onCellEditCommit={handleCommitCell}
             sx={{ fontSize: '20px' }}
-            components={{ Toolbar: GridToolbar }}
+            components={{
+              Toolbar: GridToolbar,
+              ColumnMenu: CustomColumnMenuComponent,
+            }}
+            componentsProps={{
+              columnMenu: { handleReturnGrades },
+            }}
           />
         </div>
       </div>
     </div>
   )
+  const createColTable = (g, editable) => {
+    const col = {
+      field: g.name.split(' ').join(''),
+      headerName: g.name,
+      type: 'number',
+      minWidth: 150,
+      editable: editable,
+      renderHeader: (params) => (
+        <>
+          <Grid
+            container
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              width: '150px',
+            }}
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+          >
+            <Grid item>
+              <Typography noWrap sx={{ mb: 0.5 }} variant="h5">
+                {g.name}
+              </Typography>
+              <Divider />
+            </Grid>
+            <Grid item>
+              <Typography noWrap variant="subtitle1">
+                Total grade: {g.point}
+              </Typography>
+            </Grid>
+          </Grid>
+        </>
+      ),
+      renderCell: (params) => (
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 'bold',
+            '& .point': {
+              display: 'none',
+            },
+            '&:hover .point': {
+              display: 'inline',
+            },
+          }}
+        >
+          {params.value}
+          <span className="point">__/{g.point}</span>
+        </Typography>
+      ),
+    }
+    return col
+  }
   const mapUser = [
     'User.id',
     'User.username',
@@ -202,55 +355,16 @@ const DetailGrades = () => {
         if (users && listGradeStudent) {
           let arrData = []
           let tempCol = []
+          let totalGrade = { name: 'Total Grade', point: 0 }
           //Add grades field to column
           listGradeStudent.forEach((g) => {
-            const temp = {
-              field: g.name.split(' ').join(''),
-              headerName: g.name,
-              type: 'number',
-              width: 150,
-              editable: true,
-              renderHeader: (params) => (
-                <Grid
-                  container
-                  direction="column"
-                  justifyContent="center"
-                  alignItems="center"
-                  spacing={2}
-                >
-                  <Grid item>
-                    <Typography sx={{ mb: 0.5 }} variant="h5">
-                      {g.name}
-                    </Typography>
-                    <Divider />
-                  </Grid>
-                  <Grid item>
-                    <Typography sx variant="subtitle1">
-                      Total grade: {g.point}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              ),
-              renderCell: (params) => (
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 'bold',
-                    '& .point': {
-                      display: 'none',
-                    },
-                    '&:hover .point': {
-                      display: 'inline',
-                    },
-                  }}
-                >
-                  {params.value}
-                  <span className="point">__/{g.point}</span>
-                </Typography>
-              ),
-            }
+            const temp = createColTable(g, true)
             tempCol.push(temp)
+            totalGrade.point += g.point
           })
+          //Add total grade column
+          const temp = createColTable(totalGrade, false)
+          tempCol.push(temp)
           //--------------
           users.forEach((user) => {
             let row = [
@@ -258,19 +372,24 @@ const DetailGrades = () => {
                 return keymapUser[k]
               }),
             ]
+            //Total grade of student
+            let totalGradeRow = 0
             listGradeStudent.forEach((g) => {
               const userFilter = g.users.filter(
                 (u) => lodashGet(u, 'User.id') === user.userId
               )
               //Check student exist in array user
               if (userFilter.length > 0) {
-                if (userFilter[0].point) {
+                if (userFilter[0].point !== null) {
                   row[0][g.name.split(' ').join('')] = userFilter[0].point
+                  totalGradeRow += userFilter[0].point
                 } else {
                   row[0][g.name.split(' ').join('')] = null
+                  totalGradeRow += 0
                 }
               }
             })
+            row[0][totalGrade.name.split(' ').join('')] = totalGradeRow
             arrData.push(row[0])
           })
           setRows(arrData)
