@@ -32,6 +32,7 @@ import { useSnackbar } from 'notistack'
 import NoDataDisplay from 'src/components/NoDataDisplay'
 import LoadingPage from 'src/components/LoadingPage'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { showDialogMsg } from 'src/utils/Notifications'
 const CustomCard = styled(Card)`
   &.sticky {
     position: sticky;
@@ -112,11 +113,18 @@ function CustomColumnMenuComponent(props) {
       >
         <ButtonMenuTable fullWidth>Upload grades</ButtonMenuTable>
         <ButtonMenuTable
-          name={currentColumn.field}
-          onClick={props.handleReturnGrades}
+          id={currentColumn.field}
+          onClick={props.handleSaveGrades}
           fullWidth
         >
-          Return grades
+          Save grades
+        </ButtonMenuTable>
+        <ButtonMenuTable
+          id={currentColumn.field}
+          onClick={props.handleMarkGrades}
+          fullWidth
+        >
+          Mark finalized
         </ButtonMenuTable>
       </Box>
     </GridColumnMenuContainer>
@@ -130,11 +138,12 @@ const DetailGrades = () => {
   const [rows, setRows] = useState([])
   const { id } = useParams()
   const [isLoading, setIsLoading] = useState(true)
+  const [dialogMsg, setDialogMsg] = useState(null)
   const [columns, setColumns] = useState([
     {
       field: 'fullName',
       headerName: 'Full name',
-      description: 'This column has a value getter and is not sortable.',
+      description: 'Show full name or username',
       sortable: false,
       width: 260,
       valueGetter: (params) => {
@@ -159,20 +168,42 @@ const DetailGrades = () => {
       ),
     },
   ])
-  const handleReturnGrades = async (event) => {
+  const handleCloseDialog = () => {
+    setDialogMsg(null)
+  }
+  const handleMarkGrades = async (event) => {
     event.preventDefault()
-    const fieldName = event.target.name
+    const gradeId = event.target.id
+    const grade = listGradeStudent.filter((g) => g.id == gradeId)
+    if (grade[0].finalized === true) {
+      setDialogMsg('Grade already marked finalized')
+      return
+    }
+    try {
+      const response = await axiosClient.post(
+        `/api/classrooms/${id}/grades/${gradeId}/finalized`
+      )
+      setListGradeStudent((prev) =>
+        prev.map((row) =>
+          row.id === grade[0].id ? { ...row, finalized: true } : row
+        )
+      )
+      enqueueSnackbar(response.data.message, { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' })
+    }
+  }
+  const handleSaveGrades = async (event) => {
+    event.preventDefault()
+    const field = event.target.id
     const colGrades = rows.map((row) => {
       const { id } = row
-      const point = row[fieldName]
-      const grades = listGradeStudent.filter(
-        (g) => g.name.split(' ').join('') === fieldName
-      )
-      return { userId: id, gradeId: grades[0].id, point: point }
+      const point = row[field]
+      return { userId: id, point: point }
     })
     try {
       const response = await axiosClient.post(
-        `/api/classrooms/${id}/grades/${colGrades[0].gradeId}`,
+        `/api/classrooms/${id}/grades/${field}`,
         {
           colGrades,
         }
@@ -181,7 +212,7 @@ const DetailGrades = () => {
       updatedGrade.forEach((g) => {
         setRows((prev) =>
           prev.map((row) =>
-            row.id === g.userId ? { ...row, [fieldName]: g.point } : row
+            row.id === g.userId ? { ...row, [field]: g.point } : row
           )
         )
       })
@@ -219,9 +250,7 @@ const DetailGrades = () => {
     })
   }
   const handleCommitCell = async (params) => {
-    const gradeEdited = listGradeStudent.filter(
-      (g) => g.name.split(' ').join('') === params.field
-    )
+    const gradeEdited = listGradeStudent.filter((g) => g.id === params.field)
     if (params.value > gradeEdited[0].point) {
       setRows((prev) =>
         prev.map((row) =>
@@ -236,8 +265,8 @@ const DetailGrades = () => {
         row.id === params.id ? { ...row, [params.field]: params.value } : row
       )
     )
-    enqueueSnackbar('Set grade success, please Return Grades to update', {
-      variant: 'success',
+    enqueueSnackbar('Set grade success, please Save Grades to update', {
+      variant: 'info',
     })
   }
   const renderTableGrade = (rows) => (
@@ -259,7 +288,7 @@ const DetailGrades = () => {
               ColumnMenu: CustomColumnMenuComponent,
             }}
             componentsProps={{
-              columnMenu: { handleReturnGrades },
+              columnMenu: { handleSaveGrades, handleMarkGrades },
             }}
           />
         </div>
@@ -268,7 +297,7 @@ const DetailGrades = () => {
   )
   const createColTable = (g, editable) => {
     const col = {
-      field: g.name.split(' ').join(''),
+      field: g.id,
       headerName: g.name,
       type: 'number',
       minWidth: 150,
@@ -355,7 +384,11 @@ const DetailGrades = () => {
         if (users && listGradeStudent) {
           let arrData = []
           let tempCol = []
-          let totalGrade = { name: 'Total Grade', point: 0 }
+          let totalGrade = {
+            id: 'TotalGrade', //Field col
+            name: 'Total Grade', // Header Name
+            point: 0,
+          }
           //Add grades field to column
           listGradeStudent.forEach((g) => {
             const temp = createColTable(g, true)
@@ -380,16 +413,16 @@ const DetailGrades = () => {
               )
               //Check student exist in array user
               if (userFilter.length > 0) {
-                if (userFilter[0].point !== null) {
-                  row[0][g.name.split(' ').join('')] = userFilter[0].point
+                if (userFilter[0].point || userFilter[0].point === 0) {
+                  row[0][g.id] = userFilter[0].point
                   totalGradeRow += userFilter[0].point
                 } else {
-                  row[0][g.name.split(' ').join('')] = null
+                  row[0][g.id] = null
                   totalGradeRow += 0
                 }
               }
             })
-            row[0][totalGrade.name.split(' ').join('')] = totalGradeRow
+            row[0][totalGrade.id] = totalGradeRow
             arrData.push(row[0])
           })
           setRows(arrData)
@@ -431,6 +464,12 @@ const DetailGrades = () => {
         LoadingPage()
       ) : (
         <>
+          {dialogMsg &&
+            showDialogMsg({
+              open: Boolean(dialogMsg),
+              msg: dialogMsg,
+              handleClose: handleCloseDialog,
+            })}
           {!rows.length
             ? NoDataDisplay({
                 msgSuggest: 'Please check user list or grade structuce',
