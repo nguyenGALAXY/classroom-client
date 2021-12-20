@@ -16,11 +16,16 @@ import InviteModal from './InviteModal'
 import Layout from '../../Layout/Layout'
 import styled from '@emotion/styled'
 import { useSelector } from 'react-redux'
-import ReactExport from 'react-data-export'
 import _ from 'lodash'
-import lodashGet from 'lodash/get'
-const ExcelFile = ReactExport.ExcelFile
-const ExcelSheet = ReactExport.ExcelFile.ExcelSheet
+import { CSVLink } from 'react-csv'
+import * as XLSX from 'xlsx'
+
+const headersCSV = [
+  { label: 'firstName', key: 'User.firstName' },
+  { label: 'lastName', key: 'User.lastName' },
+  { label: 'email', key: 'User.email' },
+  { label: 'studentId', key: 'User.studentId' },
+]
 
 const Header = styled('div')`
   display: flex;
@@ -28,7 +33,11 @@ const Header = styled('div')`
   margin-top: 24px;
   box-shadow: 0 6px 4px -4px rgb(0 0 0 / 20%);
 `
-
+const CSVrender = styled('div')`
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 10px;
+`
 const UserList = () => {
   const [users, setUsers] = useState([])
   const [errorMsg, setErrorMsg] = useState('')
@@ -38,6 +47,7 @@ const UserList = () => {
   const userRole = useSelector((state) => state.user.role)
   const history = useHistory()
   const [exportData, setExportData] = useState([])
+  const [dataArr, setDataArr] = useState([])
   useEffect(() => {
     const fetchUserClassrooms = async () => {
       try {
@@ -47,11 +57,11 @@ const UserList = () => {
           (user) => user.role === 'STUDENT'
         )
         setExportData(UserExport)
+        updateUserImport()
       } catch (error) {
         setErrorMsg(error.response.data.message)
       }
     }
-
     fetchUserClassrooms()
   }, [])
   const [students, teachers] = partition(users, (u) => u.role === 'STUDENT')
@@ -86,27 +96,76 @@ const UserList = () => {
   }
 
   const userData = exportData.map((user) =>
-    _.pick(user, ['User.username', 'User.studentId'])
+    _.pick(user, [
+      'User.firstName',
+      'User.lastName',
+      'User.email',
+      'User.studentId',
+    ])
   )
-  const multiDataSet = [
-    {
-      columns: [
-        { title: 'username', width: { wch: 50 } },
-        { title: 'studentID', width: { wch: 20 } }, //char width
-      ],
-      data: userData.map((user) => [
-        {
-          value: lodashGet(user, 'User.username'),
-          style: { font: { outline: true } },
-        },
-        {
-          value: lodashGet(user, 'User.studentId'),
-          style: { font: { outline: true } },
-        },
-      ]),
-    },
-  ]
+  const userId = exportData.map((user) => _.pick(user, ['User.id']))
+  for (let i = 0; i < userId.length; i++) {
+    userId[i].id = userId[i]['User.id']
+    delete userId[i]['User.id']
+  }
+  for (let i = 0; i < userId.length; i++) {
+    _.extend(dataArr[i], userId[i])
+  }
+  const updateUserImport = () => {
+    try {
+      dataArr.map((user) => {
+        const response = axiosClient.put(`/api/user/${user.id}`, {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          studentId: user.studentId,
+        })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const csvReport = {
+    data: userData,
+    headers: headersCSV,
+    filename: 'ClassroomUser',
+  }
 
+  const readExcel = (file) => {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader()
+      fileReader.readAsArrayBuffer(file)
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result
+        const wb = XLSX.read(bufferArray, { type: 'buffer' })
+        const wsname = wb.SheetNames[0]
+        const ws = wb.Sheets[wsname]
+        const data = XLSX.utils.sheet_to_json(ws)
+        resolve(data)
+        setDataArr(data)
+      }
+      fileReader.onerror = (error) => {
+        reject(error)
+      }
+    })
+    promise.then((d) => {
+      console.log('dataLog:', d)
+    })
+  }
+  const RenderCSVReader = () => {
+    return (
+      <>
+        <CSVrender>
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files[0]
+              readExcel(file)
+            }}
+          ></input>
+        </CSVrender>
+      </>
+    )
+  }
   const renderTeachersList = () => {
     return (
       <Grid>
@@ -132,16 +191,9 @@ const UserList = () => {
   }
   const renderExcelFile = () => {
     return (
-      <ExcelFile
-        filename="classroom"
-        element={
-          <Button variant="outlined" sx={{ ml: 3 }}>
-            Export Data
-          </Button>
-        }
-      >
-        <ExcelSheet dataSet={multiDataSet} name="user-list" />
-      </ExcelFile>
+      <Button variant="outlined" sx={{ ml: 3 }}>
+        <CSVLink {...csvReport}>Export Data</CSVLink>
+      </Button>
     )
   }
   const renderStudentsList = () => {
@@ -181,6 +233,7 @@ const UserList = () => {
               List Users
             </Typography>
             {userRole === 'TEACHER' && renderExcelFile()}
+            {RenderCSVReader()}
           </Header>
           {renderTeachersList()}
           {renderStudentsList()}
