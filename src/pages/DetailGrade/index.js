@@ -112,7 +112,8 @@ function CustomColumnMenuComponent(props) {
   const { hideMenu, currentColumn } = props
   if (
     currentColumn.field === 'fullName' ||
-    currentColumn.field === 'TotalGrade'
+    currentColumn.field === 'TotalGrade' ||
+    currentColumn.field === 'studentId'
   ) {
     return (
       <GridColumnMenuContainer
@@ -192,6 +193,12 @@ const DetailGrades = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [dialogMsg, setDialogMsg] = useState(null)
   const [columns, setColumns] = useState([
+    {
+      field: 'studentId',
+      headerName: 'Student ID',
+      description: 'Need student Id to upload grade',
+      width: 150,
+    },
     {
       field: 'fullName',
       headerName: 'Full name',
@@ -321,7 +328,8 @@ const DetailGrades = () => {
           props === 'picture' ||
           props === 'username' ||
           props === 'id' ||
-          props === 'TotalGrade'
+          props === 'TotalGrade' ||
+          props === 'studentId'
         ) {
           continue
         } else {
