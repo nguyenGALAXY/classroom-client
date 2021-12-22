@@ -137,7 +137,6 @@ const UserList = () => {
       const response = await axiosClient.post(`/api/classrooms/${id}/upload`, {
         data,
       })
-      console.log('data', response.data)
       enqueueSnackbar(response.data.message, { variant: 'success' })
     } catch (error) {
       console.log(error)
