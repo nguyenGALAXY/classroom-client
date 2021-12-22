@@ -205,13 +205,13 @@ const DetailGrades = () => {
       description: 'Show full name or username',
       sortable: false,
       width: 260,
-      valueGetter: (params) => {
-        const fisrtName = params.getValue(params.id, 'firstName')
-        const lastName = params.getValue(params.id, 'lastName')
-        if (!fisrtName && !lastName)
-          return `${params.getValue(params.id, 'username')}`
-        return `${fisrtName || ''} ${lastName || ''}`
-      },
+      // valueGetter: (params) => {
+      //   const fisrtName = params.getValue(params.id, 'firstName')
+      //   const lastName = params.getValue(params.id, 'lastName')
+      //   if (!fisrtName && !lastName)
+      //     return `${params.getValue(params.id, 'username')}`
+      //   return `${fisrtName || ''} ${lastName || ''}`
+      // },
       renderCell: (params) => (
         <>
           <Avatar
@@ -323,10 +323,8 @@ const DetailGrades = () => {
       let totalGradeRow = 0
       for (const props in row) {
         if (
-          props === 'firstName' ||
-          props === 'lastName' ||
+          props === 'fullName' ||
           props === 'picture' ||
-          props === 'username' ||
           props === 'id' ||
           props === 'TotalGrade' ||
           props === 'studentId'
@@ -345,8 +343,8 @@ const DetailGrades = () => {
   }
 
   const handleCommitCell = async (params) => {
-    const gradeEdited = listGradeStudent.filter((g) => g.id === params.field)
-    if (params.value > gradeEdited[0].point) {
+    const gradeEdited = listGradeStudent.find((g) => g.id === params.field)
+    if (params.value > gradeEdited.point) {
       setRows((prev) =>
         prev.map((row) =>
           row.id === params.id ? { ...row, [params.field]: null } : row
@@ -456,21 +454,10 @@ const DetailGrades = () => {
     return col
   }
 
-  const mapUser = [
-    'User.id',
-    'User.username',
-    'User.firstName',
-    'User.lastName',
-    'point',
-    'User.picture',
-    'User.studentId',
-  ]
+  const mapUser = ['User.id', 'point', 'User.picture', 'User.studentId']
 
   let keymapUser = {
     'User.id': 'id',
-    'User.username': 'username',
-    'User.firstName': 'firstName',
-    'User.lastName': 'lastName',
     'User.studentId': 'studentId',
     'User.picture': 'picture',
   }
@@ -488,7 +475,11 @@ const DetailGrades = () => {
         //--------------------
         // Get all students in classroom
         const response = await axiosClient.get(`/api/classrooms/${id}/users`)
-        const users = response.data.filter((user) => user.role === 'STUDENT')
+        const users = response.data.filter(
+          (user) =>
+            user.role === 'STUDENT' &&
+            lodashGet(user, 'User.studentId') !== null
+        )
         const listGradeStudent = res.data
         if (users && listGradeStudent) {
           let arrData = []
@@ -514,6 +505,7 @@ const DetailGrades = () => {
                 return keymapUser[k]
               }),
             ]
+            row[0]['fullName'] = user.fullName
             //Total grade of student
             let totalGradeRow = 0
             listGradeStudent.forEach((g) => {

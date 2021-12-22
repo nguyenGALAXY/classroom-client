@@ -224,13 +224,15 @@ function DetailClassroom() {
             >
               list user
             </Button>
-            <Button
-              size="medium"
-              component={Link}
-              to={`/classrooms/${id}/detail-grades`}
-            >
-              Grades
-            </Button>
+            {userRole === 'TEACHER' && (
+              <Button
+                size="medium"
+                component={Link}
+                to={`/classrooms/${id}/detail-grades`}
+              >
+                Grades Board
+              </Button>
+            )}
             <Button size="small">learn more</Button>
           </MyCardActions>
         </MyCard>
