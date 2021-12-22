@@ -205,13 +205,6 @@ const DetailGrades = () => {
       description: 'Show full name or username',
       sortable: false,
       width: 260,
-      // valueGetter: (params) => {
-      //   const fisrtName = params.getValue(params.id, 'firstName')
-      //   const lastName = params.getValue(params.id, 'lastName')
-      //   if (!fisrtName && !lastName)
-      //     return `${params.getValue(params.id, 'username')}`
-      //   return `${fisrtName || ''} ${lastName || ''}`
-      // },
       renderCell: (params) => (
         <>
           <Avatar
