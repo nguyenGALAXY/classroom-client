@@ -183,12 +183,13 @@ function CustomColumnMenuComponent(props) {
   )
 }
 
-const DetailGrades = () => {
+const GradesBoard = () => {
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar()
   const [listGradeStudent, setListGradeStudent] = useState(null)
   const [users, setUsers] = useState(null)
-  const [rows, setRows] = useState([])
+  const [rows, setRows] = useState([]) // Grades draft show in front-end
+  const [realRows, setRealRows] = useState([]) // Grades store in database
   const { id } = useParams()
   const [isLoading, setIsLoading] = useState(true)
   const [dialogMsg, setDialogMsg] = useState(null)
@@ -298,13 +299,12 @@ const DetailGrades = () => {
       )
       const updatedGrade = response.data.data
       updatedGrade.forEach((g) => {
-        setRows((prev) =>
+        setRealRows((prev) =>
           prev.map((row) =>
             row.id === g.userId ? { ...row, [field]: g.point } : row
           )
         )
       })
-      updateTotalGrades(rows)
       enqueueSnackbar(response.data.message, { variant: 'success' })
     } catch (error) {
       enqueueSnackbar(error.message, { variant: 'error' })
@@ -454,7 +454,6 @@ const DetailGrades = () => {
     'User.studentId': 'studentId',
     'User.picture': 'picture',
   }
-
   useEffect(() => {
     const getGradeDetail = async () => {
       try {
@@ -520,6 +519,7 @@ const DetailGrades = () => {
             arrData.push(row[0])
           })
           setRows(arrData)
+          setRealRows(arrData)
           const col = columns.concat(tempCol)
           setColumns(col)
         }
@@ -532,7 +532,10 @@ const DetailGrades = () => {
     }
     getGradeDetail()
   }, [])
-
+  useEffect(() => {
+    // Call while grades update
+    updateTotalGrades(realRows)
+  }, [realRows])
   return (
     <Layout>
       <Box
@@ -578,4 +581,4 @@ const DetailGrades = () => {
   )
 }
 
-export default DetailGrades
+export default GradesBoard
