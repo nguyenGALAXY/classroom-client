@@ -141,7 +141,6 @@ const GradesReview = () => {
       </>
     )
   }
-  console.log('req', requestReviews)
   const renderRequestReviewList = (
     <>
       {!requestReviews.length ? (
