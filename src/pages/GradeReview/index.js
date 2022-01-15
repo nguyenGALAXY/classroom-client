@@ -9,6 +9,7 @@ import {
   Box,
   IconButton,
   LinearProgress,
+  Divider,
 } from '@mui/material'
 import {
   AddSharp,
@@ -159,15 +160,49 @@ const GradesReview = () => {
             display: 'inline-block',
           }}
         >
+          <Grid item>
+            <Typography
+              sx={{ fontWeight: 'bold' }}
+              variant="h4"
+              color="#229A16"
+            >
+              Reviewing
+            </Typography>
+            <Divider />
+          </Grid>
           {requestReviews.map((g, index) => (
-            <Grid key={index} item>
-              <RequestReviewCard props={g} />
-            </Grid>
+            <>
+              {g.finalDecision != true && (
+                <Grid key={index} item>
+                  <RequestReviewCard key={index} props={g} />
+                </Grid>
+              )}
+            </>
+          ))}
+          <Grid item>
+            <Typography
+              sx={{ mt: 2, fontWeight: 'bold' }}
+              variant="h4"
+              color="error"
+            >
+              Closed reviews
+            </Typography>
+            <Divider />
+          </Grid>
+          {requestReviews.map((g, index) => (
+            <>
+              {g.finalDecision == true && (
+                <Grid key={index} item>
+                  <RequestReviewCard key={index} props={g} />
+                </Grid>
+              )}
+            </>
           ))}
         </Grid>
       )}
     </>
   )
+
   return (
     <>
       <Layout />
