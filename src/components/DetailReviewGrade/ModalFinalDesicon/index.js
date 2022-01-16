@@ -32,7 +32,6 @@ const ModalFinaldecision = ({
   const totalPoint = get(gradesReview, 'Grade.point')
   const gradeId = get(gradesReview, 'Grade.id')
   const userId = get(gradesReview, 'GradeUser.User.id')
-  console.log('test', gradesReview)
   useEffect(() => {
     setFinalPoint(get(gradesReview, 'GradeUser.point'))
   }, [gradesReview])
