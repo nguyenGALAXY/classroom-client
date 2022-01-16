@@ -228,11 +228,19 @@ function DetailClassroom() {
               <Button
                 size="medium"
                 component={Link}
-                to={`/classrooms/${id}/detail-grades`}
+                to={`/classrooms/${id}/grades-board`}
               >
                 Grades Board
               </Button>
             )}
+            <Button
+              size="medium"
+              component={Link}
+              to={`/classrooms/${id}/grades-review`}
+            >
+              Grades review
+            </Button>
+
             <Button size="small">learn more</Button>
           </MyCardActions>
         </MyCard>

@@ -18,7 +18,9 @@ import AcceptInvite from './pages/AcceptInvite'
 import UserList from './pages/UserList'
 import Profile from './pages/Profile'
 import GradeAssignment from './pages/GradeAssignment'
-import DetailGrades from './pages/DetailGrade'
+import GradesBoard from './pages/GradeBoard'
+import GradesReview from './pages/GradeReview'
+import DetailReviewGrade from './components/DetailReviewGrade'
 export default function Routes() {
   return (
     <Router>
@@ -61,8 +63,18 @@ export default function Routes() {
           />
           <ProtectedRoute
             exact
-            path="/classrooms/:id/detail-grades"
-            component={DetailGrades}
+            path="/classrooms/:id/grades-board"
+            component={GradesBoard}
+          />
+          <ProtectedRoute
+            exact
+            path="/classrooms/:id/grades-review"
+            component={GradesReview}
+          />
+          <ProtectedRoute
+            exact
+            path="/classrooms/:id/grades-review/:reviewGradeId"
+            component={DetailReviewGrade}
           />
           <ProtectedRoute
             exact

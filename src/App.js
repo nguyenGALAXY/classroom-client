@@ -5,7 +5,7 @@ import './app.css'
 import { fetchUser } from './redux/userSlice'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
+//Test jenkins build real
 function App() {
   const dispatch = useDispatch()
   const auth = useSelector((state) => state.user)
