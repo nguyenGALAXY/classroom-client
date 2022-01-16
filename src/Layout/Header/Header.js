@@ -15,6 +15,8 @@ import JoinClass from '../../components/JoinClass/JoinClass'
 import styled from '@emotion/styled'
 import { useHistory } from 'react-router-dom'
 import AccountPopover from './AccountPopover'
+import NotificationPopover from './NotificationPopover'
+
 const HeaderWrapper = styled.div({
   display: 'flex',
   alignItems: 'center',
@@ -33,30 +35,36 @@ const MyAdd = styled(Add)({
   color: '#5f656d',
   cursor: 'pointer',
 })
+
 const Header = ({ children }) => {
-  //const [anchorEl, setAnchorEl] = useState(null)
   const history = useHistory()
   const [anchorElClassroom, setAnchorElClassroom] = useState(null)
+
   const handleClick = (event) => {
     setAnchorElClassroom(event.currentTarget)
   }
+
   const handleCloseClassroomMenu = () => {
     setAnchorElClassroom(null)
   }
 
   const [createClassDialog, setCreateClassDialog] = useState(false)
   const [joinClassDialog, setJoinClassDialog] = useState(false)
+
   const handleCreate = () => {
     handleCloseClassroomMenu()
     setCreateClassDialog(true)
   }
+
   const handleJoin = () => {
     handleCloseClassroomMenu()
     setJoinClassDialog(true)
   }
+
   const handleReturnHomepage = () => {
     history.push('/')
   }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <MyAppBar position="static">
@@ -77,6 +85,7 @@ const Header = ({ children }) => {
             </Button>
           </HeaderWrapper>
           <HeaderWrapperRight>
+            <NotificationPopover />
             <MyAdd onClick={handleClick} />
             <Menu
               id="simple-menu"

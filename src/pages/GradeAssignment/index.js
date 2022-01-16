@@ -52,8 +52,6 @@ const GradeAssignment = () => {
     )
   }
 
-  console.log(listgrade)
-
   const goBack = () => {
     history.goBack()
   }

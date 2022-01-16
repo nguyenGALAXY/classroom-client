@@ -1,0 +1,4 @@
+export const NOTIFICATION_STATUS = {
+  UNREAD: 'UNREAD',
+  READ: 'READ',
+}
