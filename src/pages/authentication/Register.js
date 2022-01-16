@@ -16,6 +16,8 @@ import { showSuccessMsg, showErrMsg } from '../../utils/Notifications'
 import { isEmail } from '../../utils/Validation'
 import GoogleLogin from 'react-google-login'
 import GoogleIcon from '@mui/icons-material/Google'
+import * as Yup from 'yup'
+import { useFormik, FormikProvider } from 'formik'
 const GoogleButton = styled(Button)({
   width: '100%',
   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -43,34 +45,38 @@ export default function Register() {
   const [usernameError, setUsernameError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
   const [msg, setMsg] = useState({ err: '', success: '' })
+  const CreateAdminSchema = Yup.object().shape({
+    email: Yup.string()
+      .min(3, 'Too Short!')
+      .max(50, 'Too Long!')
+      .email('Invalid email address')
+      .required('Email required'),
+    username: Yup.string()
+      .min(3, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Username required'),
+    password: Yup.string()
+      .min(6, 'Password must at least 6 chacraters!')
+      .max(50, 'Too Long!')
+      .required('Password required'),
+    firstName: Yup.string().min(3, 'Too Short!').max(50, 'Too Long!'),
+    lastName: Yup.string().min(3, 'Too Short!').max(50, 'Too Long!'),
+  })
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    setDisabled(true)
-    setEmailError(false)
-    setUsernameError(false)
-    setPasswordError(false)
-    const data = new FormData(event.currentTarget)
-    //check email valid
-    if (!isEmail(data.get('email'))) {
-      setMsg({ err: 'Invalid email', success: '' })
-    }
-    //check email,username,password empty
-    if (data.get('email') === '') {
-      setEmailError(true)
-    }
-    if (data.get('username') === '') {
-      setUsernameError(true)
-    }
-    if (data.get('password') === '') {
-      setPasswordError(true)
-    }
-    if (data.get('email') && data.get('username') && data.get('password')) {
+  const formik = useFormik({
+    initialValues: {
+      username: '',
+      password: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+    },
+    validationSchema: CreateAdminSchema,
+    onSubmit: async (values, { resetForm }) => {
+      setDisabled(true)
       try {
         const response = await axiosClient.post('/api/auth/register', {
-          email: data.get('email'),
-          username: data.get('username'),
-          password: data.get('password'),
+          ...values,
         })
 
         if (response.data.success) {
@@ -79,13 +85,17 @@ export default function Register() {
         if (!response.data.success) {
           setMsg({ err: response.data.message, success: '' })
         }
+        resetForm()
       } catch (err) {
         err.response.data.message &&
           setMsg({ err: err.response.data.message, success: '' })
       }
-    }
-    setDisabled(false)
-  }
+
+      setDisabled(false)
+    },
+  })
+  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } =
+    formik
   const responseGoogle = async (response) => {
     try {
       const res = await axiosClient.post('/api/auth/google-signup', {
@@ -106,112 +116,131 @@ export default function Register() {
     }
   }
   return (
-    <Container component="main" maxWidth="sm">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Register New Account
-        </Typography>
-        {msg.success && showSuccessMsg(msg.success)}
-        {msg.err && showErrMsg(msg.err)}
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="given-name"
-                name="firstName"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="family-name"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                error={emailError}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                error={usernameError}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                error={passwordError}
-              />
-            </Grid>
-          </Grid>
-          <RegisterButton
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={disabled}
+    <FormikProvider value={formik}>
+      <Container component="main" maxWidth="sm">
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Register New Account
+          </Typography>
+          {msg.success && showSuccessMsg(msg.success)}
+          {msg.err && showErrMsg(msg.err)}
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 3 }}
           >
-            Register
-          </RegisterButton>
-          <GoogleLogin
-            clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENTID}
-            buttonText="Login with Google"
-            render={(renderProps) => (
-              <GoogleButton
-                onClick={renderProps.onClick}
-                startIcon={<GoogleIcon />}
-              >
-                Sign up with google
-              </GoogleButton>
-            )}
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={'single_host_origin'}
-          />
-          <Grid container justifyContent="flex-end">
-            <Grid item>
-              <Link to="/login" variant="body2">
-                Already have an account? Login
-              </Link>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="firstName"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  {...getFieldProps('firstName')}
+                  error={Boolean(touched.firstName && errors.firstName)}
+                  helperText={touched.firstName && errors.firstName}
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  autoComplete="family-name"
+                  {...getFieldProps('lastName')}
+                  error={Boolean(touched.lastName && errors.lastName)}
+                  helperText={touched.lastName && errors.lastName}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  {...getFieldProps('email')}
+                  error={Boolean(touched.email && errors.email)}
+                  helperText={touched.email && errors.email}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  name="username"
+                  {...getFieldProps('username')}
+                  error={Boolean(touched.username && errors.username)}
+                  helperText={touched.username && errors.username}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  {...getFieldProps('password')}
+                  error={Boolean(touched.password && errors.password)}
+                  helperText={touched.password && errors.password}
+                />
+              </Grid>
             </Grid>
-          </Grid>
+            <RegisterButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={!formik.isValid || !formik.dirty}
+            >
+              Register
+            </RegisterButton>
+            <GoogleLogin
+              clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENTID}
+              buttonText="Login with Google"
+              render={(renderProps) => (
+                <GoogleButton
+                  onClick={renderProps.onClick}
+                  startIcon={<GoogleIcon />}
+                >
+                  Sign up with google
+                </GoogleButton>
+              )}
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              cookiePolicy={'single_host_origin'}
+            />
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link to="/login" variant="body2">
+                  Already have an account? Login
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
         </Box>
-      </Box>
-    </Container>
+      </Container>
+    </FormikProvider>
   )
 }

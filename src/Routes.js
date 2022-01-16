@@ -21,6 +21,8 @@ import GradeAssignment from './pages/GradeAssignment'
 import GradesBoard from './pages/GradeBoard'
 import GradesReview from './pages/GradeReview'
 import DetailReviewGrade from './components/DetailReviewGrade'
+import ForgotPassword from './pages/authentication/ForgotPassword'
+import ResetPassword from './pages/authentication/ResetPassword'
 export default function Routes() {
   return (
     <Router>
@@ -29,8 +31,14 @@ export default function Routes() {
           <Route path="/login">
             <Login />
           </Route>
+          <Route path="/forgot-password">
+            <ForgotPassword />
+          </Route>
           <Route path="/register">
             <Register />
+          </Route>
+          <Route path="/resetpassword/:activation_token">
+            <ResetPassword />
           </Route>
           <Route path="/activateEmail/:activation_token">
             <ActivationEmail />
