@@ -94,16 +94,7 @@ function DetailClassroom() {
     return (
       <LinkCard>
         <CardContent>
-          <CardHeader
-            action={
-              <IconButton aria-label="settings">
-                <MoreVertIcon />
-              </IconButton>
-            }
-            title="Class code"
-          >
-            <MoreVertIcon sx={{ mt: 3 }} />
-          </CardHeader>
+          <CardHeader title="Class code"></CardHeader>
           <Typography variant="h2" color="text.secondary">
             {classCode}
           </Typography>
@@ -123,16 +114,7 @@ function DetailClassroom() {
     return (
       <LinkCard>
         <CardContent>
-          <CardHeader
-            action={
-              <IconButton aria-label="settings">
-                <MoreVertIcon />
-              </IconButton>
-            }
-            title="Grade Structure"
-          >
-            <MoreVertIcon sx={{ mt: 3 }} />
-          </CardHeader>
+          <CardHeader title="Grade Structure"></CardHeader>
           {!grades.length ? (
             <Typography variant="h6" color="text.secondary">
               No Grade Structure
@@ -240,8 +222,6 @@ function DetailClassroom() {
             >
               Grades review
             </Button>
-
-            <Button size="small">learn more</Button>
           </MyCardActions>
         </MyCard>
         <Grid container spacing={2}>

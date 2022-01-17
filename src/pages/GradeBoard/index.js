@@ -283,7 +283,6 @@ const GradesBoard = () => {
   const handleSaveGrades = async (event) => {
     event.preventDefault()
     const field = event.target.id
-
     const colGrades = rows.map((row) => {
       const { id } = row
       const point = row[field]
@@ -497,7 +496,15 @@ const GradesBoard = () => {
                 return keymapUser[k]
               }),
             ]
-            row[0]['fullName'] = user.fullName
+            if (user.fullName == null) {
+              row[0]['fullName'] =
+                _.get(user, 'User.lastName') +
+                ' ' +
+                _.get(user, 'User.firstName')
+            } else {
+              row[0]['fullName'] = user.fullName
+            }
+            console.log('username', user)
             //Total grade of student
             let totalGradeRow = 0
             listGradeStudent.forEach((g) => {
@@ -568,7 +575,7 @@ const GradesBoard = () => {
               msg: dialogMsg,
               handleClose: handleCloseDialog,
             })}
-          {!rows.length
+          {!rows.length || rows[0].studentId == null
             ? NoDataDisplay({
                 msgSuggest: 'Please check user list or grade structuce',
                 photoURL: NoDataIll.photoURL,
