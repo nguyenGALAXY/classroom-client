@@ -15,7 +15,6 @@ const MyCardHeader = styled(CardHeader)({
 })
 
 export default function RequestReviewCard({ props }) {
-  console.log(props)
   const reviewGradeId = props.id
   const gradeName = get(props, 'Grade.name')
   const username = get(props, 'User.username')
