@@ -5,16 +5,15 @@ import {
   Button,
   Card,
   CardHeader,
-  Container,
   IconButton,
   Popover,
-  Typography,
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { styled } from '@mui/styles'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import RequestReviewModal from '../RequestReviewModal'
+
 const MyCardHeader = styled(CardHeader)({
   '& .MuiCardHeader-title': {
     fontSize: '20px',
@@ -27,6 +26,7 @@ const MyCardHeader = styled(CardHeader)({
     fontWeight: 'bold',
   },
 })
+
 export default function GradeReviewCard({ props }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const [openRequestModal, setOpenRequestModal] = useState(false)

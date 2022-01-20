@@ -58,16 +58,19 @@ export default function Profile() {
   const user = useSelector((state) => state.user.user)
   const [isEdit, setIsEdit] = useState(false)
   const [inputDisabled, setInputDisabled] = useState(true)
+
   useEffect(() => {
     async function fetchAPI() {
       dispatch(fetchUser())
     }
     fetchAPI()
   }, [auth.isLogged, dispatch])
+
   const handleEdit = () => {
     setIsEdit(true)
     setInputDisabled(false)
   }
+
   const showButtonEdit = () => {
     return (
       <Button onClick={handleEdit} variant="contained">
@@ -77,34 +80,28 @@ export default function Profile() {
   }
 
   const ProfileSchema = Yup.object().shape({
-    firstName: Yup.string().min(3, 'Too Short!').max(50, 'Too Long!'),
-    lastName: Yup.string().min(3, 'Too Short!').max(50, 'Too Long!'),
-    phone: Yup.string().min(5, 'Too short').max(15, 'Too Long'),
+    firstName: Yup.string().max(50, 'Too Long!'),
+    lastName: Yup.string().max(50, 'Too Long!'),
+    phone: Yup.string().max(15, 'Too Long'),
   })
   const formik = useFormik({
     initialValues: {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phone: user.phone,
-      studentId: user.studentId,
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      phone: user.phone || '',
+      studentId: user.studentId || '',
     },
+    enableReinitialize: true,
     validationSchema: ProfileSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        dispatch(
-          updateUser({
-            ...values,
-          })
-        )
+        await dispatch(updateUser({ ...values })).unwrap()
         enqueueSnackbar('edit profile Success.', { variant: 'success' })
         setIsEdit(false)
         setInputDisabled(true)
         resetForm()
       } catch (error) {
-        enqueueSnackbar(
-          get(error, 'response.data.message', 'Error when create account'),
-          { variant: 'error' }
-        )
+        enqueueSnackbar(error, { variant: 'error' })
       }
     },
   })

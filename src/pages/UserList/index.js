@@ -8,6 +8,7 @@ import {
   Button,
   Box,
   IconButton,
+  Divider,
 } from '@mui/material'
 import {
   AddSharp,
@@ -20,11 +21,12 @@ import ListUsers from './List/ListUsers'
 import InviteModal from './InviteModal'
 import Layout from '../../Layout/Layout'
 import styled from '@emotion/styled'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import _ from 'lodash'
 import { CSVLink } from 'react-csv'
 import * as XLSX from 'xlsx'
 import { useSnackbar } from 'notistack'
+import { userSetRole } from 'src/redux/userSlice'
 
 const headersCSV = [
   { label: 'studentId', key: 'User.studentId' },
@@ -69,6 +71,7 @@ const UserList = () => {
   const history = useHistory()
   const [exportData, setExportData] = useState([])
   const [dataArr, setDataArr] = useState([])
+  const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
@@ -86,6 +89,15 @@ const UserList = () => {
     }
     fetchUserClassrooms()
   }, [])
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const results = await axiosClient.get(`/api/classrooms/${id}`)
+      dispatch(userSetRole(results.data.userRole))
+    }
+    fetchUserRole()
+  }, [])
+
   const [students, teachers] = partition(users, (u) => u.role === 'STUDENT')
 
   const handleCloseInviteModal = () => {
@@ -199,6 +211,7 @@ const UserList = () => {
           {userRole === 'TEACHER' &&
             showButtonInvite('Invite TEACHER ', 'TEACHER')}
         </Box>
+        <Divider />
 
         <InviteModal
           open={openInviteModal}
@@ -208,6 +221,30 @@ const UserList = () => {
           addNewUser={addNewUser}
         />
         <ListUsers users={teachers} removeUser={removeUser} />
+      </Grid>
+    )
+  }
+
+  const renderStudentsList = () => {
+    return (
+      <Grid sx={{ flexGrow: 1, maxWidth: '100%' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography sx={{ mt: 2, mb: 2 }} variant="h6" component="div">
+            Student
+          </Typography>
+          {userRole === 'TEACHER' &&
+            showButtonInvite('Invite STUDENT ', 'STUDENT')}
+        </Box>
+        <Divider />
+
+        <InviteModal
+          open={openInviteModal}
+          handleClose={handleCloseInviteModal}
+          classroomId={id}
+          role={role}
+          addNewUser={addNewUser}
+        />
+        <ListUsers users={students} removeUser={removeUser} />
       </Grid>
     )
   }
@@ -229,28 +266,7 @@ const UserList = () => {
       </>
     )
   }
-  const renderStudentsList = () => {
-    return (
-      <Grid sx={{ flexGrow: 1, maxWidth: '100%' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography sx={{ mt: 2, mb: 2 }} variant="h6" component="div">
-            Student
-          </Typography>
-          {userRole === 'TEACHER' &&
-            showButtonInvite('Invite STUDENT ', 'STUDENT')}
-        </Box>
 
-        <InviteModal
-          open={openInviteModal}
-          handleClose={handleCloseInviteModal}
-          classroomId={id}
-          role={role}
-          addNewUser={addNewUser}
-        />
-        <ListUsers users={students} removeUser={removeUser} />
-      </Grid>
-    )
-  }
   return (
     <>
       <Layout />
@@ -268,6 +284,7 @@ const UserList = () => {
             {userRole === 'TEACHER' && renderImportExport()}
           </Header>
           {renderTeachersList()}
+          <Divider sx={{ mb: 5 }} />
           {renderStudentsList()}
         </Container>
       )}

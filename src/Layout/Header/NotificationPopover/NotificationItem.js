@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { Box, Grid, IconButton, Typography } from '@mui/material'
+import { Box, Grid, IconButton, MenuItem, Typography } from '@mui/material'
 import {
   MarkChatRead as MarkChatReadIcon,
   MarkChatUnread as MarkChatUnreadIcon,
@@ -8,9 +8,11 @@ import {
 import { formatDistanceToNow } from 'date-fns'
 import { NOTIFICATION_STATUS } from 'src/utils/constants'
 import { updateNotifications } from 'src/redux/notificationSlice'
+import { useHistory } from 'react-router-dom'
 
 const NotificationItem = ({ notification }) => {
   const dispatch = useDispatch()
+  const history = useHistory()
 
   const handleRead = (e) => {
     e.stopPropagation()
@@ -31,8 +33,14 @@ const NotificationItem = ({ notification }) => {
     }
   }
 
+  const handleClickNotification = () => {
+    if (notification.classroomId) {
+      history.push(`/classrooms/${notification.classroomId}`)
+    }
+  }
+
   return (
-    <Grid
+    <MenuItem
       sx={{
         display: 'flex',
         px: '16px',
@@ -43,6 +51,7 @@ const NotificationItem = ({ notification }) => {
             ? '#D6E5FA'
             : '#fff',
       }}
+      onClick={handleClickNotification}
     >
       <Box sx={{ width: '250px', textOverflow: 'ellipsis' }}>
         <Typography
@@ -69,7 +78,7 @@ const NotificationItem = ({ notification }) => {
           )}
         </IconButton>
       </Box>
-    </Grid>
+    </MenuItem>
   )
 }
 

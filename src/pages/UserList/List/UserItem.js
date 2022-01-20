@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogActions,
   Button,
+  Typography,
 } from '@mui/material'
 import { Delete as DeleteIcon } from '@mui/icons-material'
 import styled from '@emotion/styled'
@@ -81,7 +82,21 @@ const UserItem = ({ user, removeUser }) => {
               }
             />
           </ListItemAvatar>
-          <p>{get(user, 'User.username')}</p>
+          <Box>
+            <Typography
+              variant="body1"
+              sx={{ display: 'flex', alignItems: 'center', mr: 2 }}
+            >
+              Username: {get(user, 'User.username')}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
+              Full Name: {get(user, 'fullName')}
+            </Typography>
+          </Box>
+
           {user.status === 'PENDING' && (
             <StatusText>({user.status})</StatusText>
           )}

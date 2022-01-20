@@ -13,11 +13,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import axiosClient from '../../axiosClient'
 import { useHistory, Link } from 'react-router-dom'
 import { showSuccessMsg, showErrMsg } from '../../utils/Notifications'
-import { isEmail } from '../../utils/Validation'
 import GoogleLogin from 'react-google-login'
 import GoogleIcon from '@mui/icons-material/Google'
 import * as Yup from 'yup'
 import { useFormik, FormikProvider } from 'formik'
+
 const GoogleButton = styled(Button)({
   width: '100%',
   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -41,9 +41,6 @@ const RegisterButton = styled(Button)({
 export default function Register() {
   const history = useHistory()
   const [disabled, setDisabled] = useState(false)
-  const [emailError, setEmailError] = useState(false)
-  const [usernameError, setUsernameError] = useState(false)
-  const [passwordError, setPasswordError] = useState(false)
   const [msg, setMsg] = useState({ err: '', success: '' })
   const CreateAdminSchema = Yup.object().shape({
     email: Yup.string()

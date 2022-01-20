@@ -78,7 +78,7 @@ const Header = ({ children }) => {
           <HeaderWrapper>
             {children}
             <Button onClick={handleReturnHomepage}>
-              <Avatar src="/book-stack.png" sx="mr: 2px" />
+              <Avatar src="/book-stack.png" sx={{ mr: '2px' }} />
               <Typography ml={1} variant="h6">
                 My Classroom
               </Typography>

@@ -2,7 +2,7 @@ import io from 'socket.io-client'
 import { store } from 'src/store'
 import { fetchNotifications } from 'src/redux/notificationSlice'
 
-let socketClient = io('http://localhost:5000')
+let socketClient = io(process.env.REACT_APP_API_URL)
 
 socketClient.on('connect', () => {
   socketClient.on('notify', () => {

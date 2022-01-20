@@ -8,9 +8,7 @@ import { SnackbarProvider } from 'notistack'
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <SnackbarProvider maxSnack={3}>
-        <App />
-      </SnackbarProvider>
+      <App />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

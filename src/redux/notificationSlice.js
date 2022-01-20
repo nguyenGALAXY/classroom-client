@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { NOTIFICATION_STATUS } from 'src/utils/constants'
 import axiosClient from '../axiosClient'
 
 export const fetchNotifications = createAsyncThunk(

@@ -6,7 +6,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Slide,
 } from '@mui/material'
 export const showErrMsg = (msg) => {
   return <Alert severity="error">{msg}</Alert>

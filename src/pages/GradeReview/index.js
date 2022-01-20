@@ -39,8 +39,8 @@ const GradesReview = () => {
   const [gradesReview, setGradesReview] = useState([])
   const [requestReviews, setRequestReviews] = useState([])
   const history = useHistory()
-  const { enqueueSnackbar } = useSnackbar()
   const dispatch = useDispatch()
+
   useEffect(() => {
     if (!_.isEmpty(user)) {
       if (userRole == '') {
