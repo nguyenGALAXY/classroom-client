@@ -65,8 +65,6 @@ const UserItem = ({ user, removeUser }) => {
     )
   }
 
-  console.log(user)
-
   return (
     <>
       <ListItem

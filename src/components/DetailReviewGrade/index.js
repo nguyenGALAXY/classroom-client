@@ -317,7 +317,7 @@ const DetailReviewGrade = () => {
                   component={'form'}
                   onSubmit={handleSubmitComment}
                 >
-                  <Grid item lg={12}>
+                  <Grid item xs={6} sm={8} md={10} lg={12}>
                     <TextField
                       placeholder="Enter new comment"
                       multiline

@@ -71,7 +71,6 @@ export default function SignIn() {
     validationSchema: CreateAdminSchema,
     onSubmit: async (values, { resetForm }) => {
       setDisabled(true)
-      console.log('check', values)
       try {
         const response = await axiosClient.post('/api/auth/login', {
           ...values,

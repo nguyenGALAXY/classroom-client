@@ -106,7 +106,6 @@ export default function Register() {
         history.push(`/activateEmail/${res.data.activation_token}`)
       }
       if (!res.data.success) {
-        console.log(res.data)
         setMsg({ err: res.data.message, success: '' })
       }
     } catch (err) {
